@@ -144,7 +144,7 @@ public:
 
     const Geometry* getPolygonal() const;
 
-    NodeSection* createNodeSection(std::size_t segIndex, const CoordinateXY& intPt) const;
+    NodeSection* createNodeSection(std::size_t segIndex, const CoordinateXY intPt) const;
 
     /**
      * Tests if a segment intersection point has that segment as its

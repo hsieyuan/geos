@@ -123,7 +123,12 @@ void object::test<9> ()
     checkDimension("GEOMETRYCOLLECTION (POLYGON EMPTY, LINESTRING (1 1, 5 4), POINT (6 5))", 2, 1);
 }
 
-
+template<>
+template<>
+void object::test<10> ()
+{
+    checkDimension("LINESTRING (0 0, 0 0, 9 9)", 1, 1);
+}
 
 
 

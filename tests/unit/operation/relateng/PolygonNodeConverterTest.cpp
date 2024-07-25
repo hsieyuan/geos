@@ -41,7 +41,7 @@ struct test_polygonnodeconverter_data {
 
     NodeSection* section(int ringId, double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
         return new NodeSection(true, Dimension::A, 1, ringId, nullptr, false, 
-            new Coordinate(v0x, v0y), new Coordinate(nx, ny), new Coordinate(v1x, v1y)); 
+            new Coordinate(v0x, v0y), Coordinate(nx, ny), new Coordinate(v1x, v1y));
     }
 
     std::vector<const NodeSection*> 
@@ -85,7 +85,6 @@ struct test_polygonnodeconverter_data {
         for (std::size_t i = 0; i < ns.size(); i++) {
             delete ns[i]->getVertex(0);
             delete ns[i]->getVertex(1);
-            delete ns[i]->nodePt();
             delete ns[i];
         }
     }

@@ -37,7 +37,6 @@ DimensionLocation::locationArea(Location loc)
         default:
             return EXTERIOR;
     }
-    return EXTERIOR;
 }
 
 
@@ -51,7 +50,6 @@ DimensionLocation::locationLine(Location loc)
         default:
             return EXTERIOR;
     }
-    return EXTERIOR;
 }
 
 
@@ -64,7 +62,6 @@ DimensionLocation::locationPoint(Location loc)
         default:
             return EXTERIOR;
     }
-    return EXTERIOR;
 }
 
 
@@ -83,7 +80,6 @@ DimensionLocation::location(int dimLoc)
         default:
             return Location::EXTERIOR;
     }
-    return Location::EXTERIOR;
 }
 
 
@@ -103,7 +99,6 @@ DimensionLocation::dimension(int dimLoc)
         default:
             return Dimension::False;
     }
-    return Dimension::False;
 }
 
 
@@ -113,7 +108,8 @@ DimensionLocation::dimension(int dimLoc, int exteriorDim)
 {
     if (dimLoc == EXTERIOR)
         return exteriorDim;
-    return dimension(dimLoc);
+    else
+        return dimension(dimLoc);
 }
 
 

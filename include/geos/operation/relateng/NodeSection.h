@@ -15,14 +15,15 @@
 
 #pragma once
 
+#include <geos/export.h>
+#include <geos/geom/Coordinate.h>
+
 #include <string>
 #include <sstream>
-#include <geos/export.h>
 
 // Forward declarations
 namespace geos {
 namespace geom {
-    class CoordinateXY;
     class Geometry;
 }
 }
@@ -63,7 +64,7 @@ private:
     const Geometry* m_poly;
     bool m_isNodeAtVertex;
     const CoordinateXY* m_v0;
-    const CoordinateXY* m_nodePt;
+    const CoordinateXY m_nodePt;
     const CoordinateXY* m_v1;
 
     // Methods
@@ -82,7 +83,7 @@ public:
         const Geometry* poly,
         bool isNodeAtVertex,
         const CoordinateXY* v0,
-        const CoordinateXY* nodePt,
+        const CoordinateXY nodePt,
         const CoordinateXY* v1)
         : m_isA(isA)
         , m_dim(dim)
@@ -109,7 +110,7 @@ public:
 
     const CoordinateXY* getVertex(int i) const;
 
-    const CoordinateXY* nodePt() const;
+    const CoordinateXY& nodePt() const;
 
     int dimension() const;
 
@@ -128,6 +129,8 @@ public:
     bool isShell() const;
 
     bool isArea() const;
+
+    static bool isAreaArea(const NodeSection& a, const NodeSection& b);
 
     bool isA() const;
 

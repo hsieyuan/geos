@@ -42,7 +42,7 @@ NodeSection::getVertex(int i) const
 
 
 /* public */
-const CoordinateXY *
+const CoordinateXY &
 NodeSection::nodePt() const
 {
     return m_nodePt;
@@ -94,6 +94,14 @@ bool
 NodeSection::isArea() const
 {
     return m_dim == Dimension::A;
+}
+
+
+/* public static */
+bool
+NodeSection::isAreaArea(const NodeSection& a, const NodeSection& b)
+{
+    return a.dimension() == Dimension::A && b.dimension() == Dimension::A;
 }
 
 
@@ -223,9 +231,9 @@ NodeSection::toString() const
     if (m_id >= 0) {
         ss << "[" << m_id << ":" << m_ringId << "]";
     }
-    ss << ": " << edgeRep(m_v0, m_nodePt);
+    ss << ": " << edgeRep(m_v0, &m_nodePt);
     ss << (m_isNodeAtVertex ? "-V-" : "---");
-    ss << " " << edgeRep(m_nodePt, m_v1);
+    ss << " " << edgeRep(&m_nodePt, m_v1);
     return ss.str();
 }
 

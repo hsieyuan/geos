@@ -99,14 +99,14 @@ RelateSegmentString::getPolygonal() const
 
 /* public */
 NodeSection*
-RelateSegmentString::createNodeSection(std::size_t segIndex, const CoordinateXY& intPt) const
+RelateSegmentString::createNodeSection(std::size_t segIndex, const CoordinateXY intPt) const
 {
     const CoordinateXY& c0 = getCoordinate(segIndex);
     const CoordinateXY& c1 = getCoordinate(segIndex + 1);
     bool isNodeAtVertex = intPt.equals2D(c0) || intPt.equals2D(c1);
     const CoordinateXY* prev = prevVertex(segIndex, &intPt);
     const CoordinateXY* next = nextVertex(segIndex, &intPt);
-    NodeSection* a = new NodeSection(m_isA, m_dimension, m_id, m_ringId, m_parentPolygonal, isNodeAtVertex, prev, &intPt, next);
+    NodeSection* a = new NodeSection(m_isA, m_dimension, m_id, m_ringId, m_parentPolygonal, isNodeAtVertex, prev, intPt, next);
     return a;
 }
 

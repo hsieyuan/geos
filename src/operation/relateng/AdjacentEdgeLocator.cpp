@@ -94,7 +94,7 @@ AdjacentEdgeLocator::createSection(const CoordinateXY* p,
     if (prev->distance(*p) == 0 || next->distance(*p) == 0) {
         //System.out.println("Found zero-length section segment");
     };
-    return new NodeSection(true, Dimension::A, 1, 0, nullptr, false, prev, p, next);
+    return new NodeSection(true, Dimension::A, 1, 0, nullptr, false, prev, *p, next);
 }
 
 

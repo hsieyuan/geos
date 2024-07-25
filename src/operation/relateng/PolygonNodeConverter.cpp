@@ -44,7 +44,7 @@ PolygonNodeConverter::convert(std::vector<const NodeSection*>& polySections)
         const NodeSection* ns2)
     {
         int comp = PolygonNodeTopology::compareAngle(
-            ns1->nodePt(),
+            &(ns1->nodePt()),
             ns1->getVertex(0),
             ns2->getVertex(0));
         return comp < 0;
