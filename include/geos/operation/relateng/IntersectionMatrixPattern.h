@@ -41,20 +41,20 @@ public:
      * A DE-9IM pattern to detect whether two polygonal geometries are adjacent along
      * an edge, but do not overlap.
      */
-    static constexpr std::string ADJACENT = "F***1****";
+    static constexpr const char* ADJACENT = "F***1****";
 
     /**
      * A DE-9IM pattern to detect a geometry which properly contains another
      * geometry (i.e. which lies entirely in the interior of the first geometry).
      */
-    static constexpr std::string CONTAINS_PROPERLY = "T**FF*FF*";
+    static constexpr const char* CONTAINS_PROPERLY = "T**FF*FF*";
 
     /**
      * A DE-9IM pattern to detect if two geometries intersect in their interiors.
      * This can be used to determine if a polygonal coverage contains any overlaps
      * (although not whether they are correctly noded).
      */
-    static constexpr std::string INTERIOR_INTERSECTS = "T********";
+    static constexpr const char* INTERIOR_INTERSECTS = "T********";
 
 
 };

@@ -63,8 +63,6 @@ private:
     const RelateGeometry* m_inputGeom;
     const Geometry* m_parentPolygonal = nullptr;
 
-    std::unique_ptr<CoordinateSequence> csStore;
-
     // Constructor
     RelateSegmentString(
         const CoordinateSequence* pts,
@@ -73,8 +71,7 @@ private:
         int id,
         int ringId,
         const Geometry* poly,
-        const RelateGeometry* inputGeom,
-        bool orient)
+        const RelateGeometry* inputGeom)
         : BasicSegmentString(const_cast<CoordinateSequence*>(pts), nullptr)
         , m_isA(isA)
         , m_dimension(dimension)
@@ -82,21 +79,15 @@ private:
         , m_ringId(ringId)
         , m_inputGeom(inputGeom)
         , m_parentPolygonal(poly)
-        {
-            bool requireCW = (ringId == 0);
-            if (orient)
-                orientAndRemoveRepeated(requireCW);
-            else
-                removeRepeated();
-        }
+        {}
 
 
     // Methods
 
-    static std::unique_ptr<RelateSegmentString> createSegmentString(
+    static const RelateSegmentString* createSegmentString(
         const CoordinateSequence* pts,
         bool isA, int dim, int elementId, int ringId,
-        const Geometry* poly, const RelateGeometry* parent, bool orient);
+        const Geometry* poly, const RelateGeometry* parent);
 
     /**
      *
@@ -119,24 +110,18 @@ private:
         std::size_t segIndex,
         const CoordinateXY* pt) const;
 
-    void orientAndRemoveRepeated(bool orientCW);
-
-    void removeRepeated();
-
 
 public:
 
-    static std::unique_ptr<RelateSegmentString>
-    createLine(
+    static const RelateSegmentString* createLine(
         const CoordinateSequence* pts,
         bool isA, int elementId,
-        const RelateGeometry* parent, bool orient = false);
+        const RelateGeometry* parent);
 
-    static std::unique_ptr<RelateSegmentString>
-    createRing(
+    static const RelateSegmentString* createRing(
         const CoordinateSequence* pts,
         bool isA, int elementId, int ringId,
-        const Geometry* poly, const RelateGeometry* parent, bool orient = true);
+        const Geometry* poly, const RelateGeometry* parent);
 
     bool isA() const;
 

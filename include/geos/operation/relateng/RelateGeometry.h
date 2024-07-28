@@ -20,8 +20,8 @@
 #include <geos/geom/Dimension.h>
 #include <geos/geom/Location.h>
 #include <geos/operation/relateng/RelatePointLocator.h>
+#include <geos/operation/relateng/RelateSegmentString.h>
 #include <geos/export.h>
-
 
 #include <string>
 #include <sstream>
@@ -38,15 +38,14 @@ namespace geom {
     class MultiPolygon;
     class Point;
 }
-namespace operation {
-namespace relateng {
-    class RelateSegmentString;
-}
+namespace noding {
+    class SegmentString;
 }
 }
 
 
 using geos::algorithm::BoundaryNodeRule;
+using geos::noding::SegmentString;
 using namespace geos::geom;
 
 
@@ -76,6 +75,12 @@ private:
     bool hasLines = false;
     bool hasAreas = false;
 
+    /*
+     * Memory contexts for lower level allocations
+     */
+    std::vector<std::unique_ptr<const RelateSegmentString>> segStringStore;
+    std::vector<std::unique_ptr<CoordinateSequence>> csStore;
+
 
     // Methods
 
@@ -99,17 +104,22 @@ private:
     void extractSegmentStringsFromAtomic(bool isA,
         const Geometry* geom, const MultiPolygon* parentPolygonal,
         const Envelope* env,
-        std::vector<std::unique_ptr<RelateSegmentString>>& segStrings);
+        std::vector<const SegmentString*>& segStrings);
 
     void extractRingToSegmentString(bool isA,
         const LinearRing* ring, int ringId, const Envelope* env,
         const Geometry* parentPoly,
-        std::vector<std::unique_ptr<RelateSegmentString>>& segStrings);
+        std::vector<const SegmentString*>& segStrings);
 
     void extractSegmentStrings(bool isA,
         const Envelope* env, const Geometry* geom,
-        std::vector<std::unique_ptr<RelateSegmentString>>& segStrings);
+        std::vector<const SegmentString*>& segStrings);
 
+    const CoordinateSequence* orientAndRemoveRepeated(
+        const CoordinateSequence* cs, bool orientCW);
+
+    const CoordinateSequence* removeRepeated(
+        const CoordinateSequence* cs);
 
 public:
 
@@ -191,19 +201,27 @@ public:
     std::vector<const Point*> getEffectivePoints();
 
     /**
-     * Extract RelateSegmentStrings from the geometry which
+     * Extract RSegmentStrings from the geometry which
      * intersect a given envelope.
      * If the envelope is null all edges are extracted.
      * @param geomA
      *
      * @param env the envelope to extract around (may be null)
-     * @return a list of RelateSegmentStrings
+     * @return a list of SegmentStrings
      */
-    std::vector<std::unique_ptr<RelateSegmentString>> extractSegmentStrings(bool isA, const Envelope* env);
+    std::vector<const SegmentString*> extractSegmentStrings(bool isA, const Envelope* env);
 
     std::string toString() const;
 
     friend std::ostream& operator<<(std::ostream& os, const RelateGeometry& rg);
+
+    /**
+     * Disable copy construction and assignment. Needed to make this
+     * class compile under MSVC. (See https://stackoverflow.com/q/29565299)
+     * Classes with members that are vector<> of unique_ptr<> need this.
+     */
+    RelateGeometry(const RelateGeometry&) = delete;
+    RelateGeometry& operator=(const RelateGeometry&) = delete;
 
 };
 

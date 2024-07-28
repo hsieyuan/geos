@@ -47,8 +47,8 @@ namespace relateng {  // geos.operation.relateng
 void
 TopologyComputer::initExteriorDims()
 {
-    int dimRealA = geomA->getDimensionReal();
-    int dimRealB = geomB->getDimensionReal();
+    int dimRealA = geomA.getDimensionReal();
+    int dimRealB = geomB.getDimensionReal();
 
     /**
      * For P/L case, P exterior intersects L interior
@@ -98,7 +98,7 @@ TopologyComputer::initExteriorEmpty(bool geomNonEmpty)
             updateDim(geomNonEmpty, Location::INTERIOR, Location::EXTERIOR, Dimension::P);
             break;
         case Dimension::L:
-            if (getGeometry(geomNonEmpty)->hasBoundary()) {
+            if (getGeometry(geomNonEmpty).hasBoundary()) {
                 updateDim(geomNonEmpty, Location::BOUNDARY, Location::EXTERIOR, Dimension::P);
             }
             updateDim(geomNonEmpty, Location::INTERIOR, Location::EXTERIOR, Dimension::L);
@@ -112,7 +112,7 @@ TopologyComputer::initExteriorEmpty(bool geomNonEmpty)
 
 
 /* private */
-RelateGeometry*
+RelateGeometry&
 TopologyComputer::getGeometry(bool isA) const
 {
     return isA ? geomA : geomB;
@@ -123,7 +123,7 @@ TopologyComputer::getGeometry(bool isA) const
 int
 TopologyComputer::getDimension(bool isA) const
 {
-    return getGeometry(isA)->getDimension();
+    return getGeometry(isA).getDimension();
 }
 
 
@@ -141,9 +141,9 @@ bool
 TopologyComputer::isSelfNodingRequired() const
 {
     //TODO: change to testing for lines or GC with > 1 polygon
-    if (geomA->isPointsOrPolygons()) return false;
-    if (geomB->isPointsOrPolygons()) return false;
-    return predicate->requireSelfNoding();
+    if (geomA.isPointsOrPolygons()) return false;
+    if (geomB.isPointsOrPolygons()) return false;
+    return predicate.requireSelfNoding();
 }
 
 
@@ -151,7 +151,7 @@ TopologyComputer::isSelfNodingRequired() const
 bool
 TopologyComputer::isExteriorCheckRequired(bool isA) const
 {
-    return predicate->requireExteriorCheck(isA);
+    return predicate.requireExteriorCheck(isA);
 }
 
 
@@ -159,7 +159,7 @@ TopologyComputer::isExteriorCheckRequired(bool isA) const
 void
 TopologyComputer::updateDim(Location locA, Location locB, int dimension)
 {
-    predicate->updateDimension(locA, locB, dimension);
+    predicate.updateDimension(locA, locB, dimension);
 }
 
 
@@ -181,7 +181,7 @@ TopologyComputer::updateDim(bool isAB, Location loc1, Location loc2, int dimensi
 bool
 TopologyComputer::isResultKnown() const
 {
-    return predicate->isKnown();
+    return predicate.isKnown();
 }
 
 
@@ -189,7 +189,7 @@ TopologyComputer::isResultKnown() const
 bool
 TopologyComputer::getResult() const
 {
-    return predicate->value();
+    return predicate.value();
 }
 
 
@@ -197,7 +197,7 @@ TopologyComputer::getResult() const
 void
 TopologyComputer::finish()
 {
-    predicate->finish();
+    predicate.finish();
 }
 
 
@@ -261,8 +261,8 @@ void
 TopologyComputer::updateNodeLocation(const NodeSection* a, const NodeSection* b)
 {
     const CoordinateXY& pt = a->nodePt();
-    Location locA = geomA->locateNode(&pt, a->getPolygonal());
-    Location locB = geomB->locateNode(&pt, b->getPolygonal());
+    Location locA = geomA.locateNode(&pt, a->getPolygonal());
+    Location locB = geomB.locateNode(&pt, b->getPolygonal());
     updateDim(locA, locB, Dimension::P);
 }
 
@@ -277,22 +277,25 @@ TopologyComputer::addNodeSections(NodeSection* ns0, NodeSection* ns1)
 
 /* public */
 void
-TopologyComputer::addPointOnPointInterior()
+TopologyComputer::addPointOnPointInterior(const CoordinateXY* pt)
 {
+    (void)pt;
     updateDim(Location::INTERIOR, Location::INTERIOR, Dimension::P);
 }
 
 /* public */
 void
-TopologyComputer::addPointOnPointExterior(bool isGeomA)
+TopologyComputer::addPointOnPointExterior(bool isGeomA, const CoordinateXY* pt)
 {
+    (void)pt;
     updateDim(isGeomA, Location::INTERIOR, Location::EXTERIOR, Dimension::P);
 }
 
 /* public */
 void
-TopologyComputer::addPointOnGeometry(bool isA, Location locTarget, int dimTarget)
+TopologyComputer::addPointOnGeometry(bool isA, Location locTarget, int dimTarget, const CoordinateXY* pt)
 {
+    (void)pt;
     updateDim(isA, Location::INTERIOR, locTarget, Dimension::P);
     switch (dimTarget) {
     case Dimension::P:
@@ -320,17 +323,18 @@ TopologyComputer::addPointOnGeometry(bool isA, Location locTarget, int dimTarget
 
 /* public */
 void
-TopologyComputer::addLineEndOnGeometry(bool isLineA, Location locLineEnd, Location locTarget, int dimTarget)
+TopologyComputer::addLineEndOnGeometry(bool isLineA, Location locLineEnd, Location locTarget, int dimTarget, const CoordinateXY* pt)
 {
+    (void)pt;
     switch (dimTarget) {
     case Dimension::P:
-        addLineEndOnPoint(isLineA, locLineEnd, locTarget);
+        addLineEndOnPoint(isLineA, locLineEnd, locTarget, pt);
         return;
     case Dimension::L:
-        addLineEndOnLine(isLineA, locLineEnd, locTarget);
+        addLineEndOnLine(isLineA, locLineEnd, locTarget, pt);
         return;
     case Dimension::A:
-        addLineEndOnArea(isLineA, locLineEnd, locTarget);
+        addLineEndOnArea(isLineA, locLineEnd, locTarget, pt);
         return;
     }
     throw IllegalStateException("Unknown target dimension: " + std::to_string(dimTarget));
@@ -338,15 +342,17 @@ TopologyComputer::addLineEndOnGeometry(bool isLineA, Location locLineEnd, Locati
 
 /* private */
 void
-TopologyComputer::addLineEndOnPoint(bool isLineA, Location locLineEnd, Location locPoint)
+TopologyComputer::addLineEndOnPoint(bool isLineA, Location locLineEnd, Location locPoint, const CoordinateXY* pt)
 {
+    (void)pt;
     updateDim(isLineA, locLineEnd, locPoint, Dimension::P);
 }
 
 /* private */
 void
-TopologyComputer::addLineEndOnLine(bool isLineA, Location locLineEnd, Location locLine)
+TopologyComputer::addLineEndOnLine(bool isLineA, Location locLineEnd, Location locLine, const CoordinateXY* pt)
 {
+    (void)pt;
     updateDim(isLineA, locLineEnd, locLine, Dimension::P);
     /**
      * When a line end is in the exterior, some length of the line interior
@@ -361,8 +367,9 @@ TopologyComputer::addLineEndOnLine(bool isLineA, Location locLineEnd, Location l
 
 /* private */
 void
-TopologyComputer::addLineEndOnArea(bool isLineA, Location locLineEnd, Location locArea)
+TopologyComputer::addLineEndOnArea(bool isLineA, Location locLineEnd, Location locArea, const CoordinateXY* pt)
 {
+    (void)pt;
     if (locArea == Location::BOUNDARY) {
         updateDim(isLineA, locLineEnd, locArea, Dimension::P);
     }
@@ -377,8 +384,9 @@ TopologyComputer::addLineEndOnArea(bool isLineA, Location locLineEnd, Location l
 
 /* public */
 void
-TopologyComputer::addAreaVertex(bool isAreaA, Location locArea, Location locTarget, int dimTarget)
+TopologyComputer::addAreaVertex(bool isAreaA, Location locArea, Location locTarget, int dimTarget, const CoordinateXY* pt)
 {
+    (void)pt;
     if (locTarget == Location::EXTERIOR) {
         updateDim(isAreaA, Location::INTERIOR, Location::EXTERIOR, Dimension::A);
         /**
@@ -397,13 +405,13 @@ TopologyComputer::addAreaVertex(bool isAreaA, Location locArea, Location locTarg
 
     switch (dimTarget) {
         case Dimension::P:
-            addAreaVertexOnPoint(isAreaA, locArea);
+            addAreaVertexOnPoint(isAreaA, locArea, pt);
             return;
         case Dimension::L:
-            addAreaVertexOnLine(isAreaA, locArea, locTarget);
+            addAreaVertexOnLine(isAreaA, locArea, locTarget, pt);
             return;
         case Dimension::A:
-            addAreaVertexOnArea(isAreaA, locArea, locTarget);
+            addAreaVertexOnArea(isAreaA, locArea, locTarget, pt);
             return;
     }
     throw IllegalStateException("Unknown target dimension: " + std::to_string(dimTarget));
@@ -412,8 +420,9 @@ TopologyComputer::addAreaVertex(bool isAreaA, Location locArea, Location locTarg
 
 /* private */
 void
-TopologyComputer::addAreaVertexOnPoint(bool isAreaA, Location locArea)
+TopologyComputer::addAreaVertexOnPoint(bool isAreaA, Location locArea, const CoordinateXY* pt)
 {
+    (void)pt;
     //-- Assert: locArea != EXTERIOR
     //-- Assert: locTarget == INTERIOR
     /**
@@ -437,8 +446,9 @@ TopologyComputer::addAreaVertexOnPoint(bool isAreaA, Location locArea)
 
 /* private */
 void
-TopologyComputer::addAreaVertexOnLine(bool isAreaA, Location locArea, Location locTarget)
+TopologyComputer::addAreaVertexOnLine(bool isAreaA, Location locArea, Location locTarget, const CoordinateXY* pt)
 {
+    (void)pt;
     //-- Assert: locArea != EXTERIOR
     /**
      * If an area vertex intersects a line, all we know is the
@@ -459,8 +469,9 @@ TopologyComputer::addAreaVertexOnLine(bool isAreaA, Location locArea, Location l
 
 /* public */
 void
-TopologyComputer::addAreaVertexOnArea(bool isAreaA, Location locArea, Location locTarget)
+TopologyComputer::addAreaVertexOnArea(bool isAreaA, Location locArea, Location locTarget, const CoordinateXY* pt)
 {
+    (void)pt;
     if (locTarget == Location::BOUNDARY) {
         if (locArea == Location::BOUNDARY) {
             //-- B/B topology is fully computed later by node analysis
@@ -513,8 +524,8 @@ TopologyComputer::evaluateNode(NodeSections* nodeSections)
     const CoordinateXY* p = nodeSections->getCoordinate();
     std::unique_ptr<RelateNode> node = nodeSections->createNode();
     //-- Node must have edges for geom, but may also be in interior of a overlapping GC
-    bool isAreaInteriorA = geomA->isNodeInArea(p, nodeSections->getPolygonal(RelateGeometry::GEOM_A));
-    bool isAreaInteriorB = geomB->isNodeInArea(p, nodeSections->getPolygonal(RelateGeometry::GEOM_B));
+    bool isAreaInteriorA = geomA.isNodeInArea(p, nodeSections->getPolygonal(RelateGeometry::GEOM_A));
+    bool isAreaInteriorB = geomB.isNodeInArea(p, nodeSections->getPolygonal(RelateGeometry::GEOM_B));
     node->finish(isAreaInteriorA, isAreaInteriorB);
     evaluateNodeEdges(node.get());
 }

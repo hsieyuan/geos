@@ -52,9 +52,9 @@ class GEOS_DLL TopologyComputer {
 private:
 
     // Members
-    TopologyPredicate* predicate;
-    RelateGeometry* geomA;
-    RelateGeometry* geomB;
+    TopologyPredicate& predicate;
+    RelateGeometry& geomA;
+    RelateGeometry& geomB;
     std::map<CoordinateXY, NodeSections*> nodeMap;
     std::deque<std::unique_ptr<NodeSections>> nodeSectionsStore;
 
@@ -67,7 +67,7 @@ private:
 
     void initExteriorEmpty(bool geomNonEmpty);
 
-    RelateGeometry* getGeometry(bool isA) const;
+    RelateGeometry& getGeometry(bool isA) const;
 
     void updateDim(Location locA, Location locB, int dimension);
 
@@ -104,11 +104,11 @@ private:
 
     void addNodeSections(NodeSection* ns0, NodeSection* ns1);
 
-    void addLineEndOnPoint(bool isLineA, Location locLineEnd, Location locPoint);
+    void addLineEndOnPoint(bool isLineA, Location locLineEnd, Location locPoint, const CoordinateXY* pt);
 
-    void addLineEndOnLine(bool isLineA, Location locLineEnd, Location locLine);
+    void addLineEndOnLine(bool isLineA, Location locLineEnd, Location locLine, const CoordinateXY* pt);
 
-    void addLineEndOnArea(bool isLineA, Location locLineEnd, Location locArea);
+    void addLineEndOnArea(bool isLineA, Location locLineEnd, Location locArea, const CoordinateXY* pt);
 
     /**
      * Updates topology for an area vertex (in Interior or on Boundary)
@@ -121,9 +121,9 @@ private:
      * @param locArea the location of the vertex in the area
      * @param pt the point at which topology is being updated
      */
-    void addAreaVertexOnPoint(bool isAreaA, Location locArea);
+    void addAreaVertexOnPoint(bool isAreaA, Location locArea, const CoordinateXY* pt);
 
-    void addAreaVertexOnLine(bool isAreaA, Location locArea, Location locTarget);
+    void addAreaVertexOnLine(bool isAreaA, Location locArea, Location locTarget, const CoordinateXY* pt);
 
     void evaluateNode(NodeSections* nodeSections);
 
@@ -136,9 +136,9 @@ private:
 public:
 
         TopologyComputer(
-            TopologyPredicate* p_predicate,
-            RelateGeometry* p_geomA,
-            RelateGeometry* p_geomB)
+            TopologyPredicate& p_predicate,
+            RelateGeometry& p_geomA,
+            RelateGeometry& p_geomB)
             : predicate(p_predicate)
             , geomA(p_geomA)
             , geomB(p_geomB)
@@ -180,13 +180,13 @@ public:
 
     void addIntersection(NodeSection* a, NodeSection* b);
 
-    void addPointOnPointInterior();
+    void addPointOnPointInterior(const CoordinateXY* pt);
 
-    void addPointOnPointExterior(bool isGeomA);
+    void addPointOnPointExterior(bool isGeomA, const CoordinateXY* pt);
 
-    void addPointOnGeometry(bool isA, Location locTarget, int dimTarget);
+    void addPointOnGeometry(bool isA, Location locTarget, int dimTarget, const CoordinateXY* pt);
 
-    void addLineEndOnGeometry(bool isLineA, Location locLineEnd, Location locTarget, int dimTarget);
+    void addLineEndOnGeometry(bool isLineA, Location locLineEnd, Location locTarget, int dimTarget, const CoordinateXY* pt);
 
     /**
      * Adds topology for an area vertex interaction with a target geometry element.
@@ -204,9 +204,9 @@ public:
      * @param dimTarget the dimension of the target geometry element
      * @param pt the point of interaction
      */
-    void addAreaVertex(bool isAreaA, Location locArea, Location locTarget, int dimTarget);
+    void addAreaVertex(bool isAreaA, Location locArea, Location locTarget, int dimTarget, const CoordinateXY* pt);
 
-    void addAreaVertexOnArea(bool isAreaA, Location locArea, Location locTarget);
+    void addAreaVertexOnArea(bool isAreaA, Location locArea, Location locTarget, const CoordinateXY* pt);
 
     void evaluateNodes();
 

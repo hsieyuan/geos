@@ -18,12 +18,9 @@
 #include <geos/geom/Coordinate.h>
 #include <geos/geom/CoordinateSequence.h>
 #include <geos/geom/Geometry.h>
-
-// #include <geos/io/WKTWriter.h>
 #include <geos/operation/relateng/NodeSection.h>
 #include <geos/operation/relateng/RelateGeometry.h>
 #include <geos/operation/relateng/RelateSegmentString.h>
-#include <geos/operation/valid/RepeatedPointRemover.h>
 #include <sstream>
 
 
@@ -32,7 +29,6 @@ using geos::geom::CoordinateXY;
 using geos::geom::Dimension;
 using geos::geom::Geometry;
 using geos::algorithm::Orientation;
-using geos::operation::valid::RepeatedPointRemover;
 
 
 namespace geos {      // geos
@@ -41,35 +37,35 @@ namespace relateng {  // geos.operation.relateng
 
 
 /* public static */
-std::unique_ptr<RelateSegmentString>
+const RelateSegmentString*
 RelateSegmentString::createLine(
     const CoordinateSequence* pts,
     bool isA, int elementId,
-    const RelateGeometry* parent, bool orient)
+    const RelateGeometry* parent)
 {
-    return createSegmentString(pts, isA, Dimension::L, elementId, -1, nullptr, parent, orient);
+    return createSegmentString(pts, isA, Dimension::L, elementId, -1, nullptr, parent);
 }
 
 
 /* public static */
-std::unique_ptr<RelateSegmentString>
+const RelateSegmentString*
 RelateSegmentString::createRing(
     const CoordinateSequence* pts,
     bool isA, int elementId, int ringId,
-    const Geometry* poly, const RelateGeometry* parent, bool orient)
+    const Geometry* poly, const RelateGeometry* parent)
 {
-    return createSegmentString(pts, isA, Dimension::A, elementId, ringId, poly, parent, orient);
+    return createSegmentString(pts, isA, Dimension::A, elementId, ringId, poly, parent);
 }
 
 
 /* private static */
-std::unique_ptr<RelateSegmentString>
+const RelateSegmentString*
 RelateSegmentString::createSegmentString(
     const CoordinateSequence* pts,
     bool isA, int dim, int elementId, int ringId,
-    const Geometry* poly, const RelateGeometry* parent, bool orient)
+    const Geometry* poly, const RelateGeometry* parent)
 {
-    return std::unique_ptr<RelateSegmentString>(new RelateSegmentString(pts, isA, dim, elementId, ringId, poly, parent, orient));
+    return new RelateSegmentString(pts, isA, dim, elementId, ringId, poly, parent);
 }
 
 
@@ -180,41 +176,6 @@ RelateSegmentString::isContainingSegment(std::size_t segIndex, const CoordinateX
 }
 
 
-/* public */
-void
-RelateSegmentString::orientAndRemoveRepeated(bool orientCW)
-{
-    bool isFlipped = (orientCW == Orientation::isCCW(seq));
-    bool hasRepeated = seq->hasRepeatedPoints();
-    /* Already conditioned */
-    if (!isFlipped && !hasRepeated) {
-        return;
-    }
-
-    if (hasRepeated) {
-        csStore = RepeatedPointRemover::removeRepeatedPoints(seq);
-        if (isFlipped)
-            csStore->reverse();
-    }
-
-    if (isFlipped) {
-        csStore = seq->clone();
-        csStore->reverse();
-    }
-
-    seq = csStore.get();
-}
-
-/* public */
-void
-RelateSegmentString::removeRepeated()
-{
-    bool hasRepeated = seq->hasRepeatedPoints();
-    if (!hasRepeated)
-        return;
-    csStore = RepeatedPointRemover::removeRepeatedPoints(seq);
-    seq = csStore.get();
-}
 
 
 } // namespace geos.operation.overlayng

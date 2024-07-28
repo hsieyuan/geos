@@ -13,7 +13,7 @@
  *
  **********************************************************************/
 
-#include <geos/algorithm/BoundaryNodeRule.h>
+#include <geos/algorithm/Orientation.h>
 #include <geos/geom/Coordinate.h>
 #include <geos/geom/Dimension.h>
 #include <geos/geom/Envelope.h>
@@ -27,16 +27,22 @@
 #include <geos/geom/Polygon.h>
 #include <geos/geom/util/ComponentCoordinateExtracter.h>
 #include <geos/geom/util/PointExtracter.h>
+#include <geos/geom/util/GeometryLister.h>
 #include <geos/operation/relateng/RelateGeometry.h>
 #include <geos/operation/relateng/RelateSegmentString.h>
 #include <geos/operation/relateng/DimensionLocation.h>
-
+#include <geos/operation/valid/RepeatedPointRemover.h>
 
 #include <sstream>
 
 
 using geos::algorithm::BoundaryNodeRule;
+using geos::algorithm::Orientation;
 using namespace geos::geom;
+using geos::geom::util::ComponentCoordinateExtracter;
+using geos::geom::util::GeometryLister;
+using geos::geom::util::PointExtracter;
+using geos::operation::valid::RepeatedPointRemover;
 
 
 namespace geos {      // geos
@@ -90,8 +96,7 @@ RelateGeometry::analyzeDimensions()
     }
     //-- analyze a (possibly mixed type) collection
     std::vector<const Geometry*> elems;
-    const GeometryCollection* col = static_cast<const GeometryCollection*>(geom);
-    col->getAllGeometries(elems);
+    GeometryLister::list(geom, elems);
     for (const Geometry* elem : elems)
     {
         if (elem->isEmpty())
@@ -117,8 +122,7 @@ bool
 RelateGeometry::isZeroLength(const Geometry* geom)
 {
     std::vector<const Geometry*> elems;
-    const GeometryCollection* col = static_cast<const GeometryCollection*>(geom);
-    col->getAllGeometries(elems);
+    GeometryLister::list(geom, elems);
     for (const Geometry* elem : elems) {
         if (elem->getGeometryTypeId() == GEOS_LINESTRING) {
             if (! isZeroLength(static_cast<const LineString*>(elem))) {
@@ -323,7 +327,7 @@ RelateGeometry::createUniquePoints()
 {
     //-- only called on P geometries
     std::vector<const CoordinateXY*> pts;
-    geom::util::ComponentCoordinateExtracter::getCoordinates(*geom, pts);
+    ComponentCoordinateExtracter::getCoordinates(*geom, pts);
     Coordinate::ConstXYSet set(pts.begin(), pts.end());
     return set;
 }
@@ -352,10 +356,11 @@ RelateGeometry::getEffectivePoints()
 
 
 /* public */
-std::vector<std::unique_ptr<RelateSegmentString>>
+std::vector<const SegmentString*>
 RelateGeometry::extractSegmentStrings(bool isA, const Envelope* env)
 {
-    std::vector<std::unique_ptr<RelateSegmentString>> segStrings;
+    std::vector<const SegmentString*> segStrings;
+    segStringStore.clear();
     extractSegmentStrings(isA, env, geom, segStrings);
     return segStrings;
 }
@@ -365,7 +370,7 @@ RelateGeometry::extractSegmentStrings(bool isA, const Envelope* env)
 void
 RelateGeometry::extractSegmentStrings(bool isA,
     const Envelope* env, const Geometry* p_geom,
-    std::vector<std::unique_ptr<RelateSegmentString>>& segStrings)
+    std::vector<const SegmentString*>& segStrings)
 {
     //-- record if parent is MultiPolygon
     const MultiPolygon* parentPolygonal = nullptr;
@@ -390,7 +395,7 @@ void
 RelateGeometry::extractSegmentStringsFromAtomic(bool isA,
     const Geometry* p_geom, const MultiPolygon* parentPolygonal,
     const Envelope* env,
-    std::vector<std::unique_ptr<RelateSegmentString>>& segStrings)
+    std::vector<const SegmentString*>& segStrings)
 {
     if (p_geom->isEmpty())
         return;
@@ -402,9 +407,14 @@ RelateGeometry::extractSegmentStringsFromAtomic(bool isA,
     elementId++;
     if (p_geom->getGeometryTypeId() == GEOS_LINESTRING) {
         const LineString* line = static_cast<const LineString*>(p_geom);
-        auto cs = line->getCoordinatesRO();
+        /*
+         * Condition the input Coordinate sequence so that it has no repeated points.
+         * This requires taking a copy which removeRepeated does behind the scenes and stores in csStore.
+         */
+        const CoordinateSequence* cs = removeRepeated(line->getCoordinatesRO());
         auto ss = RelateSegmentString::createLine(cs, isA, elementId, this);
-        segStrings.emplace_back(ss.release());
+        segStringStore.emplace_back(ss);
+        segStrings.push_back(ss);
     }
     else if (p_geom->getGeometryTypeId() == GEOS_POLYGON) {
         const Polygon* poly = static_cast<const Polygon*>(p_geom);
@@ -426,16 +436,23 @@ void
 RelateGeometry::extractRingToSegmentString(bool isA,
     const LinearRing* ring, int ringId, const Envelope* env,
     const Geometry* parentPoly,
-    std::vector<std::unique_ptr<RelateSegmentString>>& segStrings)
+    std::vector<const SegmentString*>& segStrings)
 {
     if (ring->isEmpty())
         return;
     if (env != nullptr && ! env->intersects(ring->getEnvelopeInternal()))
         return;
 
-    const CoordinateSequence* pts = ring->getCoordinatesRO();
-    auto ss = RelateSegmentString::createRing(pts, isA, elementId, ringId, parentPoly, this);
-    segStrings.emplace_back(ss.release());
+    /*
+     * Condition the input Coordinate sequence so that it has no repeated points
+     * and is oriented in a deterministic way. This requires taking a copy which
+     * orientAndRemoveRepeated does behind the scenes and stores in csStore.
+     */
+    bool requireCW = (ringId == 0);
+    const CoordinateSequence* cs = orientAndRemoveRepeated(ring->getCoordinatesRO(), requireCW);
+    auto ss = RelateSegmentString::createRing(cs, isA, elementId, ringId, parentPoly, this);
+    segStringStore.emplace_back(ss);
+    segStrings.push_back(ss);
 }
 
 
@@ -455,6 +472,51 @@ operator<<(std::ostream& os, const RelateGeometry& rg)
     return os;
 }
 
+
+
+/* private */
+const CoordinateSequence *
+RelateGeometry::orientAndRemoveRepeated(const CoordinateSequence *seq, bool orientCW)
+{
+    bool isFlipped = (orientCW == Orientation::isCCW(seq));
+    bool hasRepeated = seq->hasRepeatedPoints();
+    /* Already conditioned */
+    if (!isFlipped && !hasRepeated) {
+        return seq;
+    }
+
+    if (hasRepeated) {
+        auto deduped = RepeatedPointRemover::removeRepeatedPoints(seq);
+        if (isFlipped)
+            deduped->reverse();
+        CoordinateSequence* cs = deduped.release();
+        csStore.emplace_back(cs);
+        return cs;
+    }
+
+    if (isFlipped) {
+        auto reversed = seq->clone();
+        reversed->reverse();
+        CoordinateSequence* cs = reversed.release();
+        csStore.emplace_back(cs);
+        return cs;
+    }
+
+    return seq;
+}
+
+/* private */
+const CoordinateSequence *
+RelateGeometry::removeRepeated(const CoordinateSequence *seq)
+{
+    bool hasRepeated = seq->hasRepeatedPoints();
+    if (!hasRepeated)
+        return seq;
+    auto deduped = RepeatedPointRemover::removeRepeatedPoints(seq);
+    CoordinateSequence* cs = deduped.release();
+    csStore.emplace_back(cs);
+    return cs;
+}
 
 
 } // namespace geos.operation.overlayng

@@ -17,7 +17,7 @@
 
 #include <vector>
 #include <memory>
-// #include <geos/operation/relateng/NodeSection.h>
+#include <geos/operation/relateng/NodeSection.h>
 #include <geos/export.h>
 
 
@@ -26,7 +26,7 @@ namespace geos {
 namespace operation {
 namespace relateng {
 class RelateNode;
-class NodeSection;
+// class NodeSection;
 }
 }
 namespace geom {

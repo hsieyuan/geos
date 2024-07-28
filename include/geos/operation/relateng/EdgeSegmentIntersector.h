@@ -62,8 +62,8 @@ private:
 
 public:
 
-    EdgeSegmentIntersector(TopologyComputer& p_topoBuilder)
-        : topoComputer(p_topoBuilder)
+    EdgeSegmentIntersector(TopologyComputer& p_topoComputer)
+        : topoComputer(p_topoComputer)
         {};
 
     void processIntersections(

@@ -38,19 +38,19 @@ namespace relateng {  // geos.operation.relateng
 
 /* private */
 void
-EdgeSetIntersector::addEdges(std::vector<std::unique_ptr<RelateSegmentString>>& segStrings)
+EdgeSetIntersector::addEdges(std::vector<const SegmentString*>& segStrings)
 {
-    for (auto& ss : segStrings) {
+    for (const SegmentString* ss : segStrings) {
         addToIndex(ss);
     }
 }
 
 /* private */
 void
-EdgeSetIntersector::addToIndex(std::unique_ptr<RelateSegmentString>& segStr)
+EdgeSetIntersector::addToIndex(const SegmentString* segStr)
 {
     std::vector<MonotoneChain> segChains;
-    MonotoneChainBuilder::getChains(segStr->getCoordinates(), segStr.get(), segChains);
+    MonotoneChainBuilder::getChains(segStr->getCoordinates(), const_cast<SegmentString*>(segStr), segChains);
 
     for (MonotoneChain& mc : segChains) {
         if (envelope == nullptr || envelope->intersects(mc.getEnvelope())) {

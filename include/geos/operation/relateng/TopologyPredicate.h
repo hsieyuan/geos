@@ -191,6 +191,13 @@ public:
     virtual void updateDimension(Location locA, Location locB, int dimension) = 0;
 
 
+    friend std::ostream&
+    operator<<(std::ostream& os, const TopologyPredicate& ns)
+    {
+        os << ns.name();
+        return os;
+    }
+
 };
 
 } // namespace geos.operation.relateng

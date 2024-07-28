@@ -64,16 +64,16 @@ private:
 
     // Methods
 
-    void addToIndex(std::unique_ptr<RelateSegmentString>& segStr);
+    void addToIndex(const SegmentString* segStr);
 
-    void addEdges(std::vector<std::unique_ptr<RelateSegmentString>>& segStrings);
+    void addEdges(std::vector<const SegmentString*>& segStrings);
 
 
 public:
 
     EdgeSetIntersector(
-        std::vector<std::unique_ptr<RelateSegmentString>>& edgesA,
-        std::vector<std::unique_ptr<RelateSegmentString>>& edgesB,
+        std::vector<const SegmentString*>& edgesA,
+        std::vector<const SegmentString*>& edgesB,
         const Envelope* env)
         : envelope(env)
         , idCounter(0)
