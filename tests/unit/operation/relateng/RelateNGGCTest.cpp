@@ -300,6 +300,15 @@ void object::test<21> ()
     checkCoversCoveredBy(a, b, true);
 }
   
+// https://trac.osgeo.org/geos/ticket/1110
+template<>
+template<>
+void object::test<22> ()
+{
+    std::string a = "POLYGON ((3 7, 7 7, 7 3, 3 3, 3 7))";
+    std::string b = "GEOMETRYCOLLECTION (MULTIPOINT (EMPTY, (5 5)), LINESTRING (1 9, 4 9))";
+    checkIntersectsDisjoint(a, b, true);
+}
 
 
 
