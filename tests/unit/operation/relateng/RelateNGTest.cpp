@@ -19,7 +19,7 @@
 using namespace geos::geom;
 using namespace geos::operation::relateng;
 using geos::io::WKTReader;
-// using geos::io::WKTWriter;
+using geos::io::WKTWriter;
 
 namespace tut {
 //
@@ -30,7 +30,7 @@ namespace tut {
 struct test_relateng_data {
 
     WKTReader r;
-    // WKTWriter w;
+    WKTWriter w;
 
     void checkIntersectsDisjoint(const std::string& wkta, const std::string& wktb, bool expectedValue)
     {
@@ -100,7 +100,7 @@ struct test_relateng_data {
         // TopologyPredicate predTrace = trace(pred);
         bool actualVal = RelateNG::relate(a.get(), b.get(), pred);
         if (actualVal != expectedValue) {
-            std::cerr << *a << " " << pred << " " << *b << " = " << actualVal << std::endl;
+            std::cerr << std::endl << w.write(*a) << " " << pred << " " << w.write(*b) << " = " << actualVal << std::endl;
         }
         ensure_equals("checkPredicate", actualVal, expectedValue);
     }
