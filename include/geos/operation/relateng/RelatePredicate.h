@@ -123,6 +123,11 @@ class DisjointPredicate : public BasicPredicate {
         return false;
     }
 
+    bool requireInteraction() const override {
+        //-- ensure entire matrix is computed
+        return false;
+    }
+
     bool requireExteriorCheck(bool isSourceA) const override {
         (void)isSourceA;
         //-- intersects only requires testing interaction
