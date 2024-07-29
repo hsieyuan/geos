@@ -111,6 +111,23 @@ private:
         const CoordinateXY* e0, const CoordinateXY* e1);
 
     /**
+    * Compares whether an edge p is between or outside the edges e0 and e1,
+    * where the edges all originate at a common origin.
+    * The "inside" of e0 and e1 is the arc which does not include
+    * the positive X-axis at the origin.
+    * If p is collinear with an edge 0 is returned.
+    *
+    * @param origin the origin
+    * @param p the destination point of edge p
+    * @param e0 the destination point of edge e0
+    * @param e1 the destination point of edge e1
+    * @return a negative integer, zero or positive integer as the vector P lies outside, collinear with, or inside the vectors E0 and E1
+    */
+    static int compareBetween(const CoordinateXY* origin, const CoordinateXY* p,
+        const CoordinateXY* e0, const CoordinateXY* e1);
+
+
+    /**
     * Tests if the angle with the origin of a vector P is greater than that of the
     * vector Q.
     *

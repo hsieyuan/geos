@@ -140,7 +140,7 @@ IMPredicate::toString() const
 std::ostream&
 operator<<(std::ostream& os, const IMPredicate& imp)
 {
-    os << imp.toString();
+    os << imp.toString() << " " << imp.intMatrix;
     return os;
 }
 

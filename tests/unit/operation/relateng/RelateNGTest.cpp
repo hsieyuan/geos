@@ -694,7 +694,6 @@ void object::test<42> ()
   //checkIntersectsDisjoint(a, b, true);
     checkOverlaps(a, b, false);
     checkTouches(a, b, true);
-    checkOverlaps(a, b, false);
 }
 
 // testPolygonsEdgeAdjacent2
@@ -707,7 +706,6 @@ void object::test<43> ()
   //checkIntersectsDisjoint(a, b, true);
     checkOverlaps(a, b, false);
     checkTouches(a, b, true);
-    checkOverlaps(a, b, false);
 }
 
 // testPolygonsNested
