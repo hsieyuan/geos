@@ -380,7 +380,8 @@ RelateGeometry::extractSegmentStrings(bool isA,
 
     for (std::size_t i = 0; i < p_geom->getNumGeometries(); i++) {
         const Geometry* g = p_geom->getGeometryN(i);
-        if (g->getGeometryTypeId() == GEOS_GEOMETRYCOLLECTION) {
+        // if (g->getGeometryTypeId() == GEOS_GEOMETRYCOLLECTION) {
+        if (g->isCollection()) {
             extractSegmentStrings(isA, env, g, segStrings);
         }
         else {
