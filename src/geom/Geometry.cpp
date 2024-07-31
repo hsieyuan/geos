@@ -45,6 +45,8 @@
 #include <geos/operation/predicate/RectangleContains.h>
 #include <geos/operation/predicate/RectangleIntersects.h>
 #include <geos/operation/relate/RelateOp.h>
+#include <geos/operation/relateng/RelateNG.h>
+#include <geos/operation/relateng/RelatePredicate.h>
 #include <geos/operation/valid/IsValidOp.h>
 #include <geos/operation/union/UnaryUnionOp.h>
 #include <geos/operation/buffer/BufferOp.h>
@@ -71,6 +73,7 @@
 
 #define SHORTCIRCUIT_PREDICATES 1
 //#define USE_RECTANGLE_INTERSECTION 1
+#define USE_RELATENG 1
 
 using namespace geos::algorithm;
 using namespace geos::operation::valid;
@@ -257,7 +260,12 @@ Geometry::getEnvelope() const
 bool
 Geometry::disjoint(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::DisjointPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
     return !intersects(g);
+#endif
 }
 
 bool
@@ -269,9 +277,15 @@ Geometry::touches(const Geometry* g) const
         return false;
     }
 #endif
+
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::TouchesPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     bool res = im->isTouches(getDimension(), g->getDimension());
     return res;
+#endif
 }
 
 bool
@@ -310,6 +324,10 @@ Geometry::intersects(const Geometry* g) const
         return predicate::RectangleIntersects::intersects(*p, *this);
     }
 
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::IntersectsPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
     if (getGeometryTypeId() == GEOS_GEOMETRYCOLLECTION) {
         auto im = relate(g);
         bool res = im->isIntersects();
@@ -317,12 +335,17 @@ Geometry::intersects(const Geometry* g) const
     } else {
         return prep::PreparedGeometryFactory::prepare(this)->intersects(g);
     }
+#endif
 }
 
 /*public*/
 bool
 Geometry::covers(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::CoversPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
     // optimization - lower dimension cannot cover areas
     if(g->getDimension() == 2 && getDimension() < 2) {
         return false;
@@ -350,12 +373,18 @@ Geometry::covers(const Geometry* g) const
 
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     return im->isCovers();
+#endif
 }
 
 
 bool
 Geometry::crosses(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::CrossesPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
+
 #ifdef SHORTCIRCUIT_PREDICATES
     // short-circuit test
     if(! getEnvelopeInternal()->intersects(g->getEnvelopeInternal())) {
@@ -365,17 +394,29 @@ Geometry::crosses(const Geometry* g) const
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     bool res = im->isCrosses(getDimension(), g->getDimension());
     return res;
+
+#endif
 }
 
 bool
 Geometry::within(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::WithinPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
     return g->contains(this);
+#endif
 }
 
 bool
 Geometry::contains(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::ContainsPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
+
     // optimization - lower dimension cannot contain areas
     if(g->getDimension() == 2 && getDimension() < 2) {
         return false;
@@ -408,11 +449,17 @@ Geometry::contains(const Geometry* g) const
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     bool res = im->isContains();
     return res;
+#endif
 }
 
 bool
 Geometry::overlaps(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::OverlapsPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
+
 #ifdef SHORTCIRCUIT_PREDICATES
     // short-circuit test
     if(! getEnvelopeInternal()->intersects(g->getEnvelopeInternal())) {
@@ -422,19 +469,31 @@ Geometry::overlaps(const Geometry* g) const
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     bool res = im->isOverlaps(getDimension(), g->getDimension());
     return res;
+
+#endif
 }
 
 bool
 Geometry::relate(const Geometry* g, const std::string& intersectionPattern) const
 {
+#if USE_RELATENG
+    operation::relateng::IMPatternMatcher predicate(intersectionPattern);
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     bool res = im->matches(intersectionPattern);
     return res;
+#endif
 }
 
 bool
 Geometry::equals(const Geometry* g) const
 {
+#if USE_RELATENG
+    operation::relateng::RelatePredicate::EqualsTopoPredicate predicate;
+    return operation::relateng::RelateNG::relate(this, g, predicate);
+#else
+
 #ifdef SHORTCIRCUIT_PREDICATES
     // short-circuit test
     if(! getEnvelopeInternal()->equals(g->getEnvelopeInternal())) {
@@ -452,6 +511,7 @@ Geometry::equals(const Geometry* g) const
     std::unique_ptr<IntersectionMatrix> im(relate(g));
     bool res = im->isEquals(getDimension(), g->getDimension());
     return res;
+#endif
 }
 
 std::unique_ptr<IntersectionMatrix>

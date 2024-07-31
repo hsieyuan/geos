@@ -839,7 +839,16 @@ void object::test<60> ()
     checkRelate(a, b, "212F01FF2");
 }
 
+//================  Empty Points  ==============
 
+template<>
+template<>
+void object::test<61> ()
+{
+    std::string a = "POINT EMPTY";
+    std::string b = "POINT EMPTY";
+    checkEquals(a, b, true);
+}
 
 
 
