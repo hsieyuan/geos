@@ -190,9 +190,9 @@ class ContainsPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_B;
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        require(isDimsCompatibleWithCovers(dA, dB));
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        require(isDimsCompatibleWithCovers(dimA, dimB));
     }
 
     void init(const Envelope& envA, const Envelope& envB) override {
@@ -230,7 +230,7 @@ static std::unique_ptr<IMPredicate> contains();
  * the points in the boundary of a geometry B, within(B, A) = false
  * (As a concrete example, take A to be a LineString which lies in the boundary of a Polygon B.)
  * For a predicate with similar behavior but avoiding
- * this subtle limitation, see coveredBy().
+ * this subtle limitation, see coveredimBy().
  *
  * @return the predicate instance
  *
@@ -251,9 +251,9 @@ class WithinPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_A;
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        require(isDimsCompatibleWithCovers(dB, dA));
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        require(isDimsCompatibleWithCovers(dimB, dimA));
     }
 
     void init(const Envelope& envA, const Envelope& envB) override {
@@ -287,8 +287,8 @@ static std::unique_ptr<IMPredicate> within();
  *  * [***T**FF*]
  *  * [****T*FF*]
  *
- * coveredBy(b, a) = true
- * (covers is the converse of coveredBy())
+ * coveredimBy(b, a) = true
+ * (covers is the converse of coveredimBy())
  *
  * If either geometry is empty, the value of this predicate is false.
  *
@@ -302,7 +302,7 @@ static std::unique_ptr<IMPredicate> within();
  *
  * @return the predicate instance
  *
- * @see #coveredBy()
+ * @see #coveredimBy()
  */
 class CoversPredicate : public IMPredicate {
 
@@ -319,9 +319,9 @@ class CoversPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_B;
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        require(isDimsCompatibleWithCovers(dA, dB));
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        require(isDimsCompatibleWithCovers(dimA, dimB));
     }
 
     void init(const Envelope& envA, const Envelope& envB) override {
@@ -345,7 +345,7 @@ static std::unique_ptr<IMPredicate> covers();
 * Creates a predicate to determine whether a geometry is covered
 * by another geometry.
 *
-* The coveredBy predicate has the following equivalent definitions:
+* The coveredimBy predicate has the following equivalent definitions:
 *
 * Every point of this geometry is a point of the other geometry.
 * The DE-9IM Intersection Matrix for the two geometries matches
@@ -357,7 +357,7 @@ static std::unique_ptr<IMPredicate> covers();
 *   [**F*TF***]
 *
 * covers(B, A) = true
-* (coveredBy is the converse of covers())
+* (coveredimBy is the converse of covers())
 *
 * If either geometry is empty, the value of this predicate is false.
 *
@@ -383,9 +383,9 @@ class CoveredByPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_A;
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        require(isDimsCompatibleWithCovers(dB, dA));
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        require(isDimsCompatibleWithCovers(dimB, dimA));
     }
 
     void init(const Envelope& envA, const Envelope& envB) override {
@@ -434,11 +434,11 @@ class CrossesPredicate : public IMPredicate {
         return std::string("crosses");
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
         bool isBothPointsOrAreas =
-            (dA == Dimension::P && dB == Dimension::P) ||
-            (dA == Dimension::A && dB == Dimension::A);
+            (dimA == Dimension::P && dimB == Dimension::P) ||
+            (dimA == Dimension::A && dimB == Dimension::A);
         require(!isBothPointsOrAreas);
     }
 
@@ -490,9 +490,9 @@ class EqualsTopoPredicate : public IMPredicate {
         return std::string("equals");
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        require(dA == dB);
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        require(dimA == dimB);
     }
 
     void init(const Envelope& envA, const Envelope& envB) override {
@@ -543,9 +543,9 @@ class OverlapsPredicate : public IMPredicate {
         return std::string("overlaps");
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        require(dA == dB);
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        require(dimA == dimB);
     }
 
     bool isDetermined() const override {
@@ -602,9 +602,9 @@ class TouchesPredicate : public IMPredicate {
         return std::string("touches");
     }
 
-    void init(int dA, int dB) override {
-        IMPredicate::init(dA, dB);
-        bool isBothPoints = (dA == 0 && dB == 0);
+    void init(int dimA, int dimB) override {
+        IMPredicate::init(dimA, dimB);
+        bool isBothPoints = (dimA == 0 && dimB == 0);
         require(! isBothPoints);
     }
 
