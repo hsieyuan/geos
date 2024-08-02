@@ -490,12 +490,20 @@ class EqualsTopoPredicate : public IMPredicate {
         return std::string("equals");
     }
 
+    bool requireInteraction() const override {
+        //-- allow EMPTY = EMPTY
+        return false;
+    };
+
     void init(int _dimA, int _dimB) override {
         IMPredicate::init(_dimA, _dimB);
-        require(dimA == dimB);
+        //-- don't require equal dims, because EMPTY = EMPTY for all dims
     }
 
     void init(const Envelope& envA, const Envelope& envB) override {
+        //-- handle EMPTY = EMPTY cases
+        setValueIf(true, envA.isNull() && envB.isNull());
+
         require(envA.equals(&envB));
     }
 

@@ -151,10 +151,6 @@ RelateNG::evaluate(const Geometry* b, TopologyPredicate& predicate)
     
     RelateGeometry geomB(b, boundaryNodeRule);
 
-    if (geomA.isEmpty() && geomB.isEmpty()) {
-        //TODO: what if predicate is disjoint?  Perhaps use result on disjoint envs?
-        return finishValue(predicate);
-    }
     int dimA = geomA.getDimensionReal();
     int dimB = geomB.getDimensionReal();
 
