@@ -79,6 +79,9 @@ struct test_relateng_support {
         // TopologyPredicate predTrace = trace(pred);
         RelateNG::relate(a.get(), b.get(), pred);
         std::string actualVal = pred.getIM().toString();
+        if (actualVal != expectedValue) {
+            std::cerr << std::endl << w.write(*a) << " relate " << w.write(*b) << " = " << actualVal << std::endl;
+        }
         ensure_equals("checkRelate", actualVal, expectedValue);
     }
 

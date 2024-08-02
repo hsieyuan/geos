@@ -839,7 +839,7 @@ void object::test<60> ()
     checkRelate(a, b, "212F01FF2");
 }
 
-//================  Empty Points  ==============
+//================  Empty Geometries  ==============
 
 template<>
 template<>
@@ -847,6 +847,27 @@ void object::test<61> ()
 {
     std::string a = "POINT EMPTY";
     std::string b = "POINT EMPTY";
+    checkRelate(a, b, "FFFFFFFF2");
+    checkEquals(a, b, true);
+}
+
+template<>
+template<>
+void object::test<62> ()
+{
+    std::string a = "LINESTRING EMPTY";
+    std::string b = "LINESTRING EMPTY";
+    checkRelate(a, b, "FFFFFFFF2");
+    checkEquals(a, b, true);
+}
+
+template<>
+template<>
+void object::test<63> ()
+{
+    std::string a = "GEOMETRYCOLLECTION EMPTY";
+    std::string b = "GEOMETRYCOLLECTION EMPTY";
+    checkRelate(a, b, "FFFFFFFF2");
     checkEquals(a, b, true);
 }
 
