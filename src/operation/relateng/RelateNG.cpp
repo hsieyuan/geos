@@ -146,6 +146,9 @@ RelateNG::evaluate(const Geometry* b, TopologyPredicate& predicate)
         return false;
     }
 
+    util::ensureNoCurvedComponents(geomA.getGeometry());
+    util::ensureNoCurvedComponents(b);
+    
     RelateGeometry geomB(b, boundaryNodeRule);
 
     if (geomA.isEmpty() && geomB.isEmpty()) {

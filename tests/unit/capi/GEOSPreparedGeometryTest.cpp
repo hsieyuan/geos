@@ -406,6 +406,7 @@ void object::test<13>
 }
 
 // Verify no memory leak on exception (https://github.com/libgeos/geos/issues/505)
+// RelateNG does not throw for this case
 template<>
 template<>
 void object::test<14>
@@ -419,7 +420,7 @@ void object::test<14>
     ensure(nullptr != geom2_);
 
     int ret = GEOSPreparedTouches(prepGeom1_, geom2_);
-    ensure_equals(ret, 2);
+    ensure_equals(ret, 1);
 }
 
 // Test XY variants
