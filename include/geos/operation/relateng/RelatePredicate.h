@@ -190,8 +190,8 @@ class ContainsPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_B;
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         require(isDimsCompatibleWithCovers(dimA, dimB));
     }
 
@@ -251,8 +251,8 @@ class WithinPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_A;
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         require(isDimsCompatibleWithCovers(dimB, dimA));
     }
 
@@ -319,8 +319,8 @@ class CoversPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_B;
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         require(isDimsCompatibleWithCovers(dimA, dimB));
     }
 
@@ -383,8 +383,8 @@ class CoveredByPredicate : public IMPredicate {
         return isSourceA == RelateGeometry::GEOM_A;
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         require(isDimsCompatibleWithCovers(dimB, dimA));
     }
 
@@ -434,8 +434,8 @@ class CrossesPredicate : public IMPredicate {
         return std::string("crosses");
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         bool isBothPointsOrAreas =
             (dimA == Dimension::P && dimB == Dimension::P) ||
             (dimA == Dimension::A && dimB == Dimension::A);
@@ -490,8 +490,8 @@ class EqualsTopoPredicate : public IMPredicate {
         return std::string("equals");
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         require(dimA == dimB);
     }
 
@@ -543,8 +543,8 @@ class OverlapsPredicate : public IMPredicate {
         return std::string("overlaps");
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         require(dimA == dimB);
     }
 
@@ -602,8 +602,8 @@ class TouchesPredicate : public IMPredicate {
         return std::string("touches");
     }
 
-    void init(int dimA, int dimB) override {
-        IMPredicate::init(dimA, dimB);
+    void init(int _dimA, int _dimB) override {
+        IMPredicate::init(_dimA, _dimB);
         bool isBothPoints = (dimA == 0 && dimB == 0);
         require(! isBothPoints);
     }
