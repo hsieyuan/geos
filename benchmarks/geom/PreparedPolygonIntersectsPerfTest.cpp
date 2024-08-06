@@ -111,7 +111,7 @@ void test (std::size_t npts) {
 }
 
 int main() {
-    std::cout << "target_points,num_tests,num_hits,test_type,pts_in_test,method,time" << std::endl;
+    std::cout << "target_points,num_tests,num_hits,test_type,pts_in_test,method,time,factor" << std::endl;
     test(5);
     test(10);
     test(500);
