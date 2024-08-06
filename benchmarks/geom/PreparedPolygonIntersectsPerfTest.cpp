@@ -3,8 +3,12 @@
 #include <geos/profiler.h>
 #include <geos/geom/IntersectionMatrix.h>
 #include <geos/geom/prep/PreparedGeometryFactory.h>
+#include <geos/operation/relateng/RelateNG.h>
+#include <geos/operation/relateng/RelatePredicate.h>
 #include <geos/io/WKBWriter.h>
 #include <BenchmarkUtils.h>
+
+#include <iomanip>
 
 using namespace geos::geom;
 
@@ -47,33 +51,63 @@ int testPrepGeomCached(const Geometry& g, const std::vector<std::unique_ptr<Geom
     return count;
 }
 
+int testRelateNGPreparedCached(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& lines) {
+    int count = 0;
+    auto prep = geos::operation::relateng::RelateNG::prepare(&g);
+    for (const auto& line : lines) {
+        count += prep->evaluate(line.get(), *geos::operation::relateng::RelatePredicate::intersects());
+    }
+    return count;
+}
+
 template<typename F>
-void test(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& lines, const std::string& method, F&& fun)
+double test(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms, const std::string& method, F&& fun, double base)
 {
     geos::util::Profile sw("PreparedPolygonIntersects");
     sw.start();
 
     int count = 0;
     for (std::size_t i = 0; i < MAX_ITER; i++) {
-        count += fun(g, lines);
+        count += fun(g, geoms);
     }
 
     sw.stop();
-    std::cout << g.getNumPoints() << "," << MAX_ITER * lines.size() << "," << count << "," << lines[0]->getGeometryType() << "," << lines[0]->getNumPoints() << "," << method << "," << sw.getTot() << std::endl;
+    double tot = sw.getTot();
+    double timesFaster = base / tot;
+    std::cout << std::fixed << std::setprecision(0);
+    std::cout << g.getNumPoints() << "," 
+        << MAX_ITER * geoms.size() << "," 
+        << count << "," << geoms[0]->getGeometryType() << "," 
+        << geoms[0]->getNumPoints() << "," 
+        << method << "," 
+        << tot << ","
+        << timesFaster 
+        << std::endl;
+    return tot;
 }
 
 void test (std::size_t npts) {
 
     auto target = geos::benchmark::createSineStar({0, 0}, 100, npts);
+    auto polygons = geos::benchmark::createPolygons(*target->getEnvelopeInternal(), NUM_LINES, 1.0, NUM_LINES_PTS);
     auto lines = geos::benchmark::createLines(*target->getEnvelopeInternal(), NUM_LINES, 1.0, NUM_LINES_PTS);
     auto points = geos::benchmark::createPoints(*target->getEnvelopeInternal(), NUM_LINES);
 
-    test(*target, lines, "RelateOp", testRelateOp);
-    test(*target, lines, "Geometry::intersects", testGeometryIntersects);
-    test(*target, lines, "PrepGeomCached", testPrepGeomCached);
-    test(*target, points, "RelateOp", testRelateOp);
-    test(*target, points, "Geometry::intersects", testGeometryIntersects);
-    test(*target, points, "PrepGeomCached", testPrepGeomCached);
+    double base;
+    base = test(*target, polygons, "RelateOp", testRelateOp, 0);
+    test(*target, polygons, "Geometry::intersects", testGeometryIntersects, base);
+    test(*target, polygons, "PrepGeomCached", testPrepGeomCached, base);
+    test(*target, polygons, "RelateNGPreparedCached", testRelateNGPreparedCached, base);
+
+    base = test(*target, lines, "RelateOp", testRelateOp, 0);
+    test(*target, lines, "Geometry::intersects", testGeometryIntersects, base);
+    test(*target, lines, "PrepGeomCached", testPrepGeomCached, base);
+    test(*target, lines, "RelateNGPreparedCached", testRelateNGPreparedCached, base);
+
+    base = test(*target, points, "RelateOp", testRelateOp, 0);
+    test(*target, points, "Geometry::intersects", testGeometryIntersects, base);
+    test(*target, points, "PrepGeomCached", testPrepGeomCached, base);
+    test(*target, points, "RelateNGPreparedCached", testRelateNGPreparedCached, base);
 }
 
 int main() {
