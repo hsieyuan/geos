@@ -73,7 +73,7 @@ double test(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geo
 
     sw.stop();
     double tot = sw.getTot();
-    double timesFaster = base / tot;
+    double timesFaster = base == 0 ? 1 : base / tot;
     std::cout << std::fixed << std::setprecision(0);
     std::cout << g.getNumPoints() << "," 
         << MAX_ITER * geoms.size() << "," 
