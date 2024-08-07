@@ -583,7 +583,7 @@ extern "C" {
     GEOSDisjoint_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Disjoint(g1, g2);
+            return RelateNG::disjoint(g1, g2);
         });
     }
 
@@ -591,7 +591,7 @@ extern "C" {
     GEOSTouches_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Touches(g1, g2);
+            return RelateNG::touches(g1, g2);
         });
     }
 
@@ -599,7 +599,7 @@ extern "C" {
     GEOSIntersects_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Intersects(g1, g2);
+            return RelateNG::intersects(g1, g2);
         });
     }
 
@@ -607,7 +607,7 @@ extern "C" {
     GEOSCrosses_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Crosses(g1, g2);
+            return RelateNG::crosses(g1, g2);
         });
     }
 
@@ -615,7 +615,7 @@ extern "C" {
     GEOSWithin_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Within(g1, g2);
+            return RelateNG::within(g1, g2);
         });
     }
 
@@ -623,7 +623,7 @@ extern "C" {
     GEOSContains_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Contains(g1, g2);
+            return RelateNG::contains(g1, g2);
         });
     }
 
@@ -631,7 +631,7 @@ extern "C" {
     GEOSOverlaps_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Overlaps(g1, g2);
+            return RelateNG::overlaps(g1, g2);
         });
     }
 
@@ -639,7 +639,7 @@ extern "C" {
     GEOSCovers_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::Covers(g1, g2);
+            return RelateNG::covers(g1, g2);
         });
     }
 
@@ -647,7 +647,7 @@ extern "C" {
     GEOSCoveredBy_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::CoveredBy(g1, g2);
+            return RelateNG::coveredBy(g1, g2);
         });
     }
 
@@ -655,7 +655,7 @@ extern "C" {
     GEOSEquals_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return RelateNG::EqualsTopo(g1, g2);
+            return RelateNG::equalsTopo(g1, g2);
         });
     }
 
@@ -715,19 +715,19 @@ extern "C" {
 
             switch (bnr) {
                 case GEOSRELATE_BNR_MOD2: /* same as OGC */
-                    im = RelateOp::relate(g1, g2,
+                    im = RelateNG::relate(g1, g2,
                                           BoundaryNodeRule::getBoundaryRuleMod2());
                     break;
                 case GEOSRELATE_BNR_ENDPOINT:
-                    im = RelateOp::relate(g1, g2,
+                    im = RelateNG::relate(g1, g2,
                                           BoundaryNodeRule::getBoundaryEndPoint());
                     break;
                 case GEOSRELATE_BNR_MULTIVALENT_ENDPOINT:
-                    im = RelateOp::relate(g1, g2,
+                    im = RelateNG::relate(g1, g2,
                                           BoundaryNodeRule::getBoundaryMultivalentEndPoint());
                     break;
                 case GEOSRELATE_BNR_MONOVALENT_ENDPOINT:
-                    im = RelateOp::relate(g1, g2,
+                    im = RelateNG::relate(g1, g2,
                                           BoundaryNodeRule::getBoundaryMonovalentEndPoint());
                     break;
                 default:

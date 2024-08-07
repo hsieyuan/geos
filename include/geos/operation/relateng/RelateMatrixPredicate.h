@@ -73,8 +73,8 @@ public:
     *
     * @return the IM matrix
     */
-    IntersectionMatrix& getIM() {
-        return intMatrix;
+    std::unique_ptr<IntersectionMatrix> getIM() {
+        return std::unique_ptr<IntersectionMatrix>(new IntersectionMatrix(intMatrix));
     }
 
 };

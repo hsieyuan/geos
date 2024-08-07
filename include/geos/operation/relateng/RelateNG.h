@@ -185,7 +185,7 @@ public:
      * @param b the B input geometry
      * @return the DE-9IM matrix for the topological relationship
      */
-    static IntersectionMatrix relate(const Geometry* a, const Geometry* b);
+    static std::unique_ptr<IntersectionMatrix> relate(const Geometry* a, const Geometry* b);
 
     /**
      * Computes the DE-9IM matrix
@@ -196,7 +196,7 @@ public:
      * @param bnRule the Boundary Node Rule to use
      * @return the DE-9IM matrix for the relationship
      */
-    static IntersectionMatrix relate(const Geometry* a, const Geometry* b, const BoundaryNodeRule& bnRule);
+    static std::unique_ptr<IntersectionMatrix> relate(const Geometry* a, const Geometry* b, const BoundaryNodeRule& bnRule);
 
     /**
      * Creates a prepared RelateNG instance to optimize the
@@ -225,7 +225,7 @@ public:
      * @param b the B geometry to test against
      * @return the DE-9IM matrix
      */
-    IntersectionMatrix evaluate(const Geometry* b);
+    std::unique_ptr<IntersectionMatrix> evaluate(const Geometry* b);
 
 
     /**
@@ -250,25 +250,25 @@ public:
      */
     bool evaluate(const Geometry* b, TopologyPredicate& predicate);
 
-    static bool Intersects(const Geometry* a, const Geometry* b);
+    static bool intersects(const Geometry* a, const Geometry* b);
 
-    static bool Crosses(const Geometry* a, const Geometry* b);
+    static bool crosses(const Geometry* a, const Geometry* b);
 
-    static bool Disjoint(const Geometry* a, const Geometry* b);
+    static bool disjoint(const Geometry* a, const Geometry* b);
 
-    static bool Touches(const Geometry* a, const Geometry* b);
+    static bool touches(const Geometry* a, const Geometry* b);
 
-    static bool Within(const Geometry* a, const Geometry* b);
+    static bool within(const Geometry* a, const Geometry* b);
 
-    static bool Contains(const Geometry* a, const Geometry* b);
+    static bool contains(const Geometry* a, const Geometry* b);
 
-    static bool Overlaps(const Geometry* a, const Geometry* b);
+    static bool overlaps(const Geometry* a, const Geometry* b);
 
-    static bool Covers(const Geometry* a, const Geometry* b);
+    static bool covers(const Geometry* a, const Geometry* b);
 
-    static bool CoveredBy(const Geometry* a, const Geometry* b);
+    static bool coveredBy(const Geometry* a, const Geometry* b);
 
-    static bool EqualsTopo(const Geometry* a, const Geometry* b);
+    static bool equalsTopo(const Geometry* a, const Geometry* b);
 
 };
 

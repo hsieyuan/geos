@@ -59,92 +59,82 @@ namespace relateng {  // geos.operation.relateng
 
 /* public static */
 bool
-RelateNG::Intersects(const Geometry* a, const Geometry* b)
+RelateNG::intersects(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::IntersectsPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Crosses(const Geometry* a, const Geometry* b)
+RelateNG::crosses(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::CrossesPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Disjoint(const Geometry* a, const Geometry* b)
+RelateNG::disjoint(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::DisjointPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Touches(const Geometry* a, const Geometry* b)
+RelateNG::touches(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::TouchesPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Within(const Geometry* a, const Geometry* b)
+RelateNG::within(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::WithinPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Contains(const Geometry* a, const Geometry* b)
+RelateNG::contains(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::ContainsPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Overlaps(const Geometry* a, const Geometry* b)
+RelateNG::overlaps(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::OverlapsPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::Covers(const Geometry* a, const Geometry* b)
+RelateNG::covers(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::CoversPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::CoveredBy(const Geometry* a, const Geometry* b)
+RelateNG::coveredBy(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::CoveredByPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
 bool
-RelateNG::EqualsTopo(const Geometry* a, const Geometry* b)
+RelateNG::equalsTopo(const Geometry* a, const Geometry* b)
 {
     RelatePredicate::EqualsTopoPredicate pred;
-    RelateNG rng(a, false);
-    return rng.evaluate(b, pred);
+    return RelateNG::relate(a, b, pred);
 }
 
 /* public static */
@@ -175,7 +165,7 @@ RelateNG::relate(const Geometry* a, const Geometry* b, const std::string& imPatt
 
 
 /* public static */
-IntersectionMatrix
+std::unique_ptr<IntersectionMatrix>
 RelateNG::relate(const Geometry* a, const Geometry* b)
 {
     RelateNG rng(a, false);
@@ -184,7 +174,7 @@ RelateNG::relate(const Geometry* a, const Geometry* b)
 
 
 /* public static */
-IntersectionMatrix
+std::unique_ptr<IntersectionMatrix>
 RelateNG::relate(const Geometry* a, const Geometry* b, const BoundaryNodeRule& bnRule)
 {
     RelateNG rng(a, false, bnRule);
@@ -209,7 +199,7 @@ RelateNG::prepare(const Geometry* a, const BoundaryNodeRule& bnRule)
 
 
 /* public */
-IntersectionMatrix
+std::unique_ptr<IntersectionMatrix>
 RelateNG::evaluate(const Geometry* b)
 {
     RelateMatrixPredicate rel;
