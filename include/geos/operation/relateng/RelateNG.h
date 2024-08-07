@@ -44,16 +44,15 @@ namespace relateng {
 }
 
 
-using geos::geom::CoordinateXY;
+namespace geos {      // geos.
+namespace operation { // geos.operation
+namespace relateng { // geos.operation.relateng
+
+
 using geos::geom::CoordinateXY;
 using geos::geom::Geometry;
 using geos::algorithm::BoundaryNodeRule;
 using geos::noding::MCIndexSegmentSetMutualIntersector;
-
-
-namespace geos {      // geos.
-namespace operation { // geos.operation
-namespace relateng { // geos.operation.relateng
 
 
 /**
@@ -251,7 +250,25 @@ public:
      */
     bool evaluate(const Geometry* b, TopologyPredicate& predicate);
 
+    static bool Intersects(const Geometry* a, const Geometry* b);
 
+    static bool Crosses(const Geometry* a, const Geometry* b);
+
+    static bool Disjoint(const Geometry* a, const Geometry* b);
+
+    static bool Touches(const Geometry* a, const Geometry* b);
+
+    static bool Within(const Geometry* a, const Geometry* b);
+
+    static bool Contains(const Geometry* a, const Geometry* b);
+
+    static bool Overlaps(const Geometry* a, const Geometry* b);
+
+    static bool Covers(const Geometry* a, const Geometry* b);
+
+    static bool CoveredBy(const Geometry* a, const Geometry* b);
+
+    static bool EqualsTopo(const Geometry* a, const Geometry* b);
 
 };
 

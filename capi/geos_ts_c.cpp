@@ -92,6 +92,10 @@
 #include <geos/operation/valid/IsValidOp.h>
 #include <geos/operation/valid/MakeValid.h>
 #include <geos/operation/valid/RepeatedPointRemover.h>
+
+#include <geos/operation/relateng/RelateNG.h>
+#include <geos/operation/relateng/RelatePredicate.h>
+
 #include <geos/precision/GeometryPrecisionReducer.h>
 #include <geos/shape/fractal/HilbertEncoder.h>
 #include <geos/simplify/DouglasPeuckerSimplifier.h>
@@ -205,6 +209,8 @@ using geos::operation::geounion::CascadedPolygonUnion;
 using geos::operation::overlayng::OverlayNG;
 using geos::operation::overlayng::UnaryUnionNG;
 using geos::operation::overlayng::OverlayNGRobust;
+using geos::operation::relateng::RelateNG;
+using geos::operation::relateng::RelatePredicate;
 using geos::operation::valid::TopologyValidationError;
 
 using geos::precision::GeometryPrecisionReducer;
@@ -577,7 +583,7 @@ extern "C" {
     GEOSDisjoint_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->disjoint(g2);
+            return RelateNG::Disjoint(g1, g2);
         });
     }
 
@@ -585,7 +591,7 @@ extern "C" {
     GEOSTouches_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->touches(g2);
+            return RelateNG::Touches(g1, g2);
         });
     }
 
@@ -593,7 +599,7 @@ extern "C" {
     GEOSIntersects_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->intersects(g2);
+            return RelateNG::Intersects(g1, g2);
         });
     }
 
@@ -601,7 +607,7 @@ extern "C" {
     GEOSCrosses_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->crosses(g2);
+            return RelateNG::Crosses(g1, g2);
         });
     }
 
@@ -609,7 +615,7 @@ extern "C" {
     GEOSWithin_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->within(g2);
+            return RelateNG::Within(g1, g2);
         });
     }
 
@@ -617,7 +623,7 @@ extern "C" {
     GEOSContains_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->contains(g2);
+            return RelateNG::Contains(g1, g2);
         });
     }
 
@@ -625,7 +631,7 @@ extern "C" {
     GEOSOverlaps_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->overlaps(g2);
+            return RelateNG::Overlaps(g1, g2);
         });
     }
 
@@ -633,7 +639,7 @@ extern "C" {
     GEOSCovers_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->covers(g2);
+            return RelateNG::Covers(g1, g2);
         });
     }
 
@@ -641,7 +647,15 @@ extern "C" {
     GEOSCoveredBy_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
     {
         return execute(extHandle, 2, [&]() {
-            return g1->coveredBy(g2);
+            return RelateNG::CoveredBy(g1, g2);
+        });
+    }
+
+    char
+    GEOSEquals_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
+    {
+        return execute(extHandle, 2, [&]() {
+            return RelateNG::EqualsTopo(g1, g2);
         });
     }
 
@@ -826,14 +840,6 @@ extern "C" {
 //-----------------------------------------------------------------
 // general purpose
 //-----------------------------------------------------------------
-
-    char
-    GEOSEquals_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2)
-    {
-        return execute(extHandle, 2, [&]() {
-            return g1->equals(g2);
-        });
-    }
 
     char
     GEOSEqualsExact_r(GEOSContextHandle_t extHandle, const Geometry* g1, const Geometry* g2, double tolerance)

@@ -59,6 +59,96 @@ namespace relateng {  // geos.operation.relateng
 
 /* public static */
 bool
+RelateNG::Intersects(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::IntersectsPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Crosses(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::CrossesPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Disjoint(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::DisjointPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Touches(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::TouchesPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Within(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::WithinPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Contains(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::ContainsPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Overlaps(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::OverlapsPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::Covers(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::CoversPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::CoveredBy(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::CoveredByPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
+RelateNG::EqualsTopo(const Geometry* a, const Geometry* b)
+{
+    RelatePredicate::EqualsTopoPredicate pred;
+    RelateNG rng(a, false);
+    return rng.evaluate(b, pred);
+}
+
+/* public static */
+bool
 RelateNG::relate(const Geometry* a, const Geometry* b, TopologyPredicate& pred)
 {
     RelateNG rng(a, false);
@@ -146,8 +236,8 @@ RelateNG::evaluate(const Geometry* b, TopologyPredicate& predicate)
         return false;
     }
 
-    util::ensureNoCurvedComponents(geomA.getGeometry());
-    util::ensureNoCurvedComponents(b);
+    geos::util::ensureNoCurvedComponents(geomA.getGeometry());
+    geos::util::ensureNoCurvedComponents(b);
     
     RelateGeometry geomB(b, boundaryNodeRule);
 

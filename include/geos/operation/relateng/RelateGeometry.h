@@ -44,14 +44,13 @@ namespace noding {
 }
 
 
-using geos::algorithm::BoundaryNodeRule;
-using geos::noding::SegmentString;
-using namespace geos::geom;
-
-
 namespace geos {      // geos.
 namespace operation { // geos.operation
 namespace relateng { // geos.operation.relateng
+
+using namespace geos::geom;
+using geos::algorithm::BoundaryNodeRule;
+using geos::noding::SegmentString;
 
 
 class GEOS_DLL RelateGeometry {
