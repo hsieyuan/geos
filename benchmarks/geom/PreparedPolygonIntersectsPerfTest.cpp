@@ -24,6 +24,7 @@ std::size_t NUM_LINES_PTS = 100;
 
 #define INTERSECTS 0
 #define CONTAINS 1
+#define COVERS 2
 
 int predicateOp = INTERSECTS;
 
@@ -45,6 +46,15 @@ int testRelateOpContains(const Geometry& g, const std::vector<std::unique_ptr<Ge
     return count;
 }
 
+int testRelateOpCovers(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    for (const auto& geom : geoms) {
+        auto im = g.relate(geom.get());
+        count += im->isCovers();
+    }
+    return count;
+}
+
 int testGeometryIntersects(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
     int count = 0;
     for (const auto& geom : geoms) {
@@ -57,6 +67,14 @@ int testGeometryContains(const Geometry& g, const std::vector<std::unique_ptr<Ge
     int count = 0;
     for (const auto& geom : geoms) {
         count += g.contains(geom.get());
+    }
+    return count;
+}
+
+int testGeometryCovers(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    for (const auto& geom : geoms) {
+        count += g.covers(geom.get());
     }
     return count;
 }
@@ -79,6 +97,15 @@ int testPrepGeomContains(const Geometry& g, const std::vector<std::unique_ptr<Ge
     return count;
 }
 
+int testPrepGeomCovers(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    auto prep = prep::PreparedGeometryFactory::prepare(&g);
+    for (const auto& geom : geoms) {
+        count += prep->covers(geom.get());
+    }
+    return count;
+}
+
 int testRelateNGPreparedIntersects(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
     int count = 0;
     auto prep = geos::operation::relateng::RelateNG::prepare(&g);
@@ -93,6 +120,15 @@ int testRelateNGPreparedContains(const Geometry& g, const std::vector<std::uniqu
     auto prep = geos::operation::relateng::RelateNG::prepare(&g);
     for (const auto& line : geoms) {
         count += prep->evaluate(line.get(), *geos::operation::relateng::RelatePredicate::contains());
+    }
+    return count;
+}
+
+int testRelateNGPreparedCovers(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    auto prep = geos::operation::relateng::RelateNG::prepare(&g);
+    for (const auto& line : geoms) {
+        count += prep->evaluate(line.get(), *geos::operation::relateng::RelatePredicate::covers());
     }
     return count;
 }
@@ -151,6 +187,12 @@ void test(int dim, std::size_t npts) {
         test(*target, geoms, "Geometry::contains", testGeometryIntersects, baseTime);
         test(*target, geoms, "PreparedGeom contains", testPrepGeomContains, baseTime);
         test(*target, geoms, "RelateNGPrepared contains", testRelateNGPreparedContains, baseTime);
+        break;
+    case COVERS:
+        baseTime = test(*target, geoms, "RelateOp covers", testRelateOpCovers, 0);
+        test(*target, geoms, "Geometry::covers", testGeometryCovers, baseTime);
+        test(*target, geoms, "PreparedGeom covers", testPrepGeomCovers, baseTime);
+        test(*target, geoms, "RelateNGPrepared covers", testRelateNGPreparedCovers, baseTime);
     }
 }
 
@@ -172,6 +214,9 @@ int main(int argc, char** argv) {
         std::string op{argv[1]};
         if (op == "contains") {
             predicateOp = CONTAINS;
+        }
+        else if (op == "covers") {
+            predicateOp = COVERS;
         }
     }
 
