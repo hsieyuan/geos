@@ -1,7 +1,7 @@
 /******************************************************
- *   Performance tests for spatial predicates
+ *   Performance tests for topological predicates
  * 
- * Usage: perf_prepared_polygon_intersects [ intersects | contains ]
+ * Usage: perf_topo_predicate [ intersects | contains ]
 ******************************************************/
 
 #include <geos/geom/util/SineStarFactory.h>
@@ -25,7 +25,9 @@ std::size_t NUM_LINES_PTS = 100;
 #define INTERSECTS 0
 #define CONTAINS 1
 #define COVERS 2
+#define TOUCHES 3
 
+std::string op{"intersects"};
 int predicateOp = INTERSECTS;
 
 int testRelateOpIntersects(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
@@ -55,6 +57,15 @@ int testRelateOpCovers(const Geometry& g, const std::vector<std::unique_ptr<Geom
     return count;
 }
 
+int testRelateOpTouches(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    for (const auto& geom : geoms) {
+        auto im = g.relate(geom.get());
+        count += im->isTouches(g.getDimension(), geom.get()->getDimension());
+    }
+    return count;
+}
+
 int testGeometryIntersects(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
     int count = 0;
     for (const auto& geom : geoms) {
@@ -75,6 +86,14 @@ int testGeometryCovers(const Geometry& g, const std::vector<std::unique_ptr<Geom
     int count = 0;
     for (const auto& geom : geoms) {
         count += g.covers(geom.get());
+    }
+    return count;
+}
+
+int testGeometryTouches(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    for (const auto& geom : geoms) {
+        count += g.touches(geom.get());
     }
     return count;
 }
@@ -133,10 +152,19 @@ int testRelateNGPreparedCovers(const Geometry& g, const std::vector<std::unique_
     return count;
 }
 
+int testRelateNGPreparedTouches(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms) {
+    int count = 0;
+    auto prep = geos::operation::relateng::RelateNG::prepare(&g);
+    for (const auto& line : geoms) {
+        count += prep->evaluate(line.get(), *geos::operation::relateng::RelatePredicate::touches());
+    }
+    return count;
+}
+
 template<typename F>
 double test(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geoms, const std::string& method, F&& fun, double baseTime)
 {
-    geos::util::Profile sw("PreparedPolygonIntersects");
+    geos::util::Profile sw("TopologuyPredicatePerf");
     sw.start();
 
     int count = 0;
@@ -153,8 +181,9 @@ double test(const Geometry& g, const std::vector<std::unique_ptr<Geometry>>& geo
         << count << "," << geoms[0]->getGeometryType() << "," 
         << geoms[0]->getNumPoints() << "," 
         << method << "," 
-        << tot << ","
-        << timesFaster 
+        << tot << ",";
+    std::cout << std::fixed << std::setprecision(1);
+    std::cout << timesFaster 
         << std::endl;
     return tot;
 }
@@ -177,22 +206,28 @@ void test(int dim, std::size_t npts) {
     double baseTime;
     switch (predicateOp) {
     case INTERSECTS:
-        baseTime = test(*target, geoms, "RelateOp intersects", testRelateOpIntersects, 0);
-        test(*target, geoms, "Geometry::intersects", testGeometryIntersects, baseTime);
-        test(*target, geoms, "PreparedGeom", testPrepGeomIntersects, baseTime);
-        test(*target, geoms, "RelateNGPrepared", testRelateNGPreparedIntersects, baseTime);
+        baseTime = test(*target, geoms, "RelateOp-intersects", testRelateOpIntersects, 0);
+        test(*target, geoms, "Geometry-intersects", testGeometryIntersects, baseTime);
+        test(*target, geoms, "PreparedGeom-intersects", testPrepGeomIntersects, baseTime);
+        test(*target, geoms, "RelateNGPrepared-intersects", testRelateNGPreparedIntersects, baseTime);
         break;
     case CONTAINS:
-        baseTime = test(*target, geoms, "RelateOp contains", testRelateOpIntersects, 0);
-        test(*target, geoms, "Geometry::contains", testGeometryIntersects, baseTime);
-        test(*target, geoms, "PreparedGeom contains", testPrepGeomContains, baseTime);
-        test(*target, geoms, "RelateNGPrepared contains", testRelateNGPreparedContains, baseTime);
+        baseTime = test(*target, geoms, "RelateOp-contains", testRelateOpIntersects, 0);
+        test(*target, geoms, "Geometry-contains", testGeometryIntersects, baseTime);
+        test(*target, geoms, "PreparedGeom-contains", testPrepGeomContains, baseTime);
+        test(*target, geoms, "RelateNGPrepared-contains", testRelateNGPreparedContains, baseTime);
         break;
     case COVERS:
-        baseTime = test(*target, geoms, "RelateOp covers", testRelateOpCovers, 0);
-        test(*target, geoms, "Geometry::covers", testGeometryCovers, baseTime);
-        test(*target, geoms, "PreparedGeom covers", testPrepGeomCovers, baseTime);
-        test(*target, geoms, "RelateNGPrepared covers", testRelateNGPreparedCovers, baseTime);
+        baseTime = test(*target, geoms, "RelateOp-covers", testRelateOpCovers, 0);
+        test(*target, geoms, "Geometry-covers", testGeometryCovers, baseTime);
+        test(*target, geoms, "PreparedGeom-covers", testPrepGeomCovers, baseTime);
+        test(*target, geoms, "RelateNGPrepared-covers", testRelateNGPreparedCovers, baseTime);
+        break;
+    case TOUCHES:
+        baseTime = test(*target, geoms, "RelateOp-touches", testRelateOpTouches, 0);
+        test(*target, geoms, "Geometry-touches", testGeometryTouches, baseTime);
+        test(*target, geoms, "RelateNGPrepared-touches", testRelateNGPreparedTouches, baseTime);
+        break;
     }
 }
 
@@ -209,15 +244,19 @@ void testAll(int dim)
 }
 
 int main(int argc, char** argv) {
-    predicateOp = INTERSECTS;
+    op = "intersects";
     if (argc >= 2) {
-        std::string op{argv[1]};
-        if (op == "contains") {
-            predicateOp = CONTAINS;
-        }
-        else if (op == "covers") {
-            predicateOp = COVERS;
-        }
+        op = argv[1];
+    }
+    predicateOp = INTERSECTS;
+    if (op == "contains") {
+        predicateOp = CONTAINS;
+    }
+    else if (op == "covers") {
+        predicateOp = COVERS;
+    }
+    else if (op == "touches") {
+        predicateOp = TOUCHES;
     }
 
     std::cout << "target_points,num_tests,num_hits,test_type,pts_in_test,method,time,factor" << std::endl;
