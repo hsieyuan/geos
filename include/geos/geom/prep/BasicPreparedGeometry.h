@@ -20,10 +20,8 @@
 #pragma once
 
 #include <geos/geom/prep/PreparedGeometry.h> // for inheritance
-//#include <geos/algorithm/PointLocator.h>
-//#include <geos/geom/util/ComponentCoordinateExtracter.h>
 #include <geos/geom/Coordinate.h>
-//#include <geos/geom/Location.h>
+//#include <geos/operation/relateng/RelateNG.h>
 
 #include <vector>
 #include <string>

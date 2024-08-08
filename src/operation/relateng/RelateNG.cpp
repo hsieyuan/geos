@@ -57,6 +57,8 @@ namespace relateng {  // geos.operation.relateng
 #define GEOM_B RelateGeometry::GEOM_B
 
 
+/************************************************************************/
+
 /* public static */
 bool
 RelateNG::intersects(const Geometry* a, const Geometry* b)
@@ -145,7 +147,6 @@ RelateNG::relate(const Geometry* a, const Geometry* b, TopologyPredicate& pred)
     return rng.evaluate(b, pred);
 }
 
-
 /* public static */
 bool
 RelateNG::relate(const Geometry* a, const Geometry* b, TopologyPredicate& pred, const BoundaryNodeRule& bnRule)
@@ -153,7 +154,6 @@ RelateNG::relate(const Geometry* a, const Geometry* b, TopologyPredicate& pred, 
     RelateNG rng(a, false, bnRule);
     return rng.evaluate(b, pred);
 }
-
 
 /* public static */
 bool
@@ -163,7 +163,6 @@ RelateNG::relate(const Geometry* a, const Geometry* b, const std::string& imPatt
     return rng.evaluate(b, imPattern);
 }
 
-
 /* public static */
 std::unique_ptr<IntersectionMatrix>
 RelateNG::relate(const Geometry* a, const Geometry* b)
@@ -171,7 +170,6 @@ RelateNG::relate(const Geometry* a, const Geometry* b)
     RelateNG rng(a, false);
     return rng.evaluate(b);
 }
-
 
 /* public static */
 std::unique_ptr<IntersectionMatrix>
@@ -181,6 +179,96 @@ RelateNG::relate(const Geometry* a, const Geometry* b, const BoundaryNodeRule& b
     return rng.evaluate(b);
 }
 
+/************************************************************************/
+
+/* public */
+bool
+RelateNG::intersects(const Geometry* a)
+{
+    RelatePredicate::IntersectsPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::crosses(const Geometry* a)
+{
+    RelatePredicate::CrossesPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::disjoint(const Geometry* a)
+{
+    RelatePredicate::DisjointPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::touches(const Geometry* a)
+{
+    RelatePredicate::TouchesPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::within(const Geometry* a)
+{
+    RelatePredicate::WithinPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::contains(const Geometry* a)
+{
+    RelatePredicate::ContainsPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::overlaps(const Geometry* a)
+{
+    RelatePredicate::OverlapsPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::covers(const Geometry* a)
+{
+    RelatePredicate::CoversPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::coveredBy(const Geometry* a)
+{
+    RelatePredicate::CoveredByPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::equalsTopo(const Geometry* a)
+{
+    RelatePredicate::EqualsTopoPredicate pred;
+    return evaluate(a, pred);
+}
+
+/* public */
+bool
+RelateNG::relate(const Geometry* a, const std::string& imPattern)
+{
+    return evaluate(b, imPattern);
+}
+
+/************************************************************************/
 
 /* public static */
 std::unique_ptr<RelateNG>
@@ -197,6 +285,7 @@ RelateNG::prepare(const Geometry* a, const BoundaryNodeRule& bnRule)
     return std::unique_ptr<RelateNG>(new RelateNG(a, true, bnRule));
 }
 
+/************************************************************************/
 
 /* public */
 std::unique_ptr<IntersectionMatrix>

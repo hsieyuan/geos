@@ -251,24 +251,28 @@ public:
     bool evaluate(const Geometry* b, TopologyPredicate& predicate);
 
     static bool intersects(const Geometry* a, const Geometry* b);
-
     static bool crosses(const Geometry* a, const Geometry* b);
-
     static bool disjoint(const Geometry* a, const Geometry* b);
-
     static bool touches(const Geometry* a, const Geometry* b);
-
     static bool within(const Geometry* a, const Geometry* b);
-
     static bool contains(const Geometry* a, const Geometry* b);
-
     static bool overlaps(const Geometry* a, const Geometry* b);
-
     static bool covers(const Geometry* a, const Geometry* b);
-
     static bool coveredBy(const Geometry* a, const Geometry* b);
-
     static bool equalsTopo(const Geometry* a, const Geometry* b);
+
+    bool intersects(const Geometry* a);
+    bool crosses(const Geometry* a);
+    bool disjoint(const Geometry* a);
+    bool touches(const Geometry* a);
+    bool within(const Geometry* a);
+    bool contains(const Geometry* a);
+    bool overlaps(const Geometry* a);
+    bool covers(const Geometry* a);
+    bool coveredBy(const Geometry* a);
+    bool equalsTopo(const Geometry* a);
+    bool relate(const Geometry* a, const std::string& imPattern);
+
 
 };
 
