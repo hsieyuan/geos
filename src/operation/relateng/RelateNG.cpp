@@ -430,7 +430,8 @@ RelateNG::computeLineEnds(
         if (elem->isEmpty())
             continue;
 
-        if (elem->getGeometryTypeId() == GEOS_LINESTRING) {
+        if (elem->getGeometryTypeId() == GEOS_LINESTRING ||
+            elem->getGeometryTypeId() == GEOS_LINEARRING) {
             //-- once an intersection with target exterior is recorded, skip further known-exterior points
             if (hasExteriorIntersection
                 && elem->getEnvelopeInternal()->disjoint(geomTarget.getEnvelope()))

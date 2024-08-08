@@ -84,7 +84,7 @@ RelateGeometry::analyzeDimensions()
         geomDim = Dimension::P;
         return;
     }
-    if (typeId == GEOS_LINESTRING || typeId == GEOS_MULTILINESTRING) {
+    if (typeId == GEOS_LINESTRING || typeId == GEOS_LINEARRING || typeId == GEOS_MULTILINESTRING) {
         hasLines = true;
         geomDim = Dimension::L;
         return;
@@ -105,7 +105,8 @@ RelateGeometry::analyzeDimensions()
             hasPoints = true;
             if (geomDim < Dimension::P) geomDim = Dimension::P;
         }
-        if (elem->getGeometryTypeId() == GEOS_LINESTRING) {
+        if (elem->getGeometryTypeId() == GEOS_LINESTRING ||
+            elem->getGeometryTypeId() == GEOS_LINEARRING) {
             hasLines = true;
             if (geomDim < Dimension::L) geomDim = Dimension::L;
         }
@@ -124,7 +125,8 @@ RelateGeometry::isZeroLength(const Geometry* geom)
     std::vector<const Geometry*> elems;
     GeometryLister::list(geom, elems);
     for (const Geometry* elem : elems) {
-        if (elem->getGeometryTypeId() == GEOS_LINESTRING) {
+        if (elem->getGeometryTypeId() == GEOS_LINESTRING ||
+            elem->getGeometryTypeId() == GEOS_LINEARRING ) {
             if (! isZeroLength(static_cast<const LineString*>(elem))) {
                 return false;
             }
@@ -408,7 +410,8 @@ RelateGeometry::extractSegmentStringsFromAtomic(bool isA,
         return;
 
     elementId++;
-    if (p_geom->getGeometryTypeId() == GEOS_LINESTRING) {
+    if (p_geom->getGeometryTypeId() == GEOS_LINESTRING ||
+        p_geom->getGeometryTypeId() == GEOS_LINEARRING) {
         const LineString* line = static_cast<const LineString*>(p_geom);
         /*
          * Condition the input Coordinate sequence so that it has no repeated points.

@@ -81,7 +81,8 @@ RelatePointLocator::extractElements(const Geometry* p_geom)
     if (p_geom->getGeometryTypeId() == GEOS_POINT) {
         addPoint(static_cast<const Point*>(p_geom));
     }
-    else if (p_geom->getGeometryTypeId() == GEOS_LINESTRING) {
+    else if (p_geom->getGeometryTypeId() == GEOS_LINESTRING ||
+             p_geom->getGeometryTypeId() == GEOS_LINEARRING) {
         addLine(static_cast<const LineString*>(p_geom));
     }
     else if (p_geom->getGeometryTypeId() == GEOS_POLYGON ||

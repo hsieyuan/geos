@@ -32,7 +32,7 @@ class GEOS_DLL DimensionLocation {
 public:
 
     enum DimensionLocationType {
-        EXTERIOR = -3,
+        EXTERIOR = 2,           // == Location.EXTERIOR
         POINT_INTERIOR = 103,
         LINE_INTERIOR = 110,
         LINE_BOUNDARY = 111,
