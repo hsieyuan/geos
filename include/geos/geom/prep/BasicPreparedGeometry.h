@@ -21,7 +21,7 @@
 
 #include <geos/geom/prep/PreparedGeometry.h> // for inheritance
 #include <geos/geom/Coordinate.h>
-//#include <geos/operation/relateng/RelateNG.h>
+#include <geos/operation/relateng/RelateNG.h>
 
 #include <vector>
 #include <string>
@@ -37,6 +37,8 @@ class Coordinate;
 namespace geos {
 namespace geom { // geos::geom
 namespace prep { // geos::geom::prep
+
+using geos::operation::relateng::RelateNG;
 
 // * \class BasicPreparedGeometry
 
@@ -57,6 +59,15 @@ class BasicPreparedGeometry: public PreparedGeometry {
 private:
     const geom::Geometry* baseGeom;
     std::vector<const CoordinateXY*> representativePts;
+    mutable std::unique_ptr<RelateNG> relate_ng;
+
+    std::unique_ptr<RelateNG>& getRelateNG() const
+    {
+        if (relate_ng == nullptr)
+            relate_ng = RelateNG::prepare(baseGeom);
+
+        return relate_ng;
+    }
 
 protected:
     /**
