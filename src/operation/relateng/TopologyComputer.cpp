@@ -233,11 +233,16 @@ TopologyComputer::getNodeSections(const CoordinateXY& nodePt)
 void
 TopologyComputer::addIntersection(NodeSection* a, NodeSection* b)
 {
+    // add edges to node to allow full topology evaluation later
+    // we run this first (unlike JTS) in case the subsequent test throws
+    // an exception and the NodeSection pointers are not correctly
+    // saved in the memory managed store on the NodeSections, causing
+    // a small memeory leak
+    addNodeSections(a, b);
+
     if (! a->isSameGeometry(b)) {
         updateIntersectionAB(a, b);
     }
-    //-- add edges to node to allow full topology evaluation later
-    addNodeSections(a, b);
 }
 
 
