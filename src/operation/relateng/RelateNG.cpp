@@ -265,7 +265,7 @@ RelateNG::equalsTopo(const Geometry* a)
 bool
 RelateNG::relate(const Geometry* a, const std::string& imPattern)
 {
-    return evaluate(b, imPattern);
+    return evaluate(a, imPattern);
 }
 
 /************************************************************************/
