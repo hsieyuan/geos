@@ -154,20 +154,22 @@ TopologyComputer::isExteriorCheckRequired(bool isA) const
     return predicate.requireExteriorCheck(isA);
 }
 
-char toSymbol(Location loc) {
-        switch (loc) {
-        case Location::NONE: return '-';
-        case Location::INTERIOR: return 'I';
-        case Location::BOUNDARY: return 'B';
-        case Location::EXTERIOR: return 'E';
-        }
-}
+// static char
+// toSymbol(Location loc) {
+//     switch (loc) {
+//         case Location::NONE: return '-';
+//         case Location::INTERIOR: return 'I';
+//         case Location::BOUNDARY: return 'B';
+//         case Location::EXTERIOR: return 'E';
+//     }
+//     return ' ';
+// }
 
 /* private */
 void
 TopologyComputer::updateDim(Location locA, Location locB, int dimension)
 {
-//std::cout << toSymbol(locA) << toSymbol(locB) << " <- " << dimension << std::endl;
+    //std::cout << toSymbol(locA) << toSymbol(locB) << " <- " << dimension << std::endl;
     predicate.updateDimension(locA, locB, dimension);
 }
 
