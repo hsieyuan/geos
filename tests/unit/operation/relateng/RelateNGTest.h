@@ -32,7 +32,7 @@ struct test_relateng_support {
         std::unique_ptr<Geometry> a = r.read(wkta);
         std::unique_ptr<Geometry> b = r.read(wktb);
         auto prep_a = RelateNG::prepare(a.get());
-        auto prep_b = RelateNG::prepare(b.get());
+
         ensure_equals("equalsTopo", prep_a->equalsTopo(b.get()), a->equals(b.get()));
         ensure_equals("intersects", prep_a->intersects(b.get()), a->intersects(b.get()));
         ensure_equals("disjoint",   prep_a->disjoint(b.get()),   a->disjoint(b.get()));
