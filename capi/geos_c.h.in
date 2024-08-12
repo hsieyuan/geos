@@ -5209,8 +5209,7 @@ extern char GEOS_DLL GEOSPreparedWithin(
 * true if the patterns are consistent and false otherwise.
 * \param pg1 The prepared geometry
 * \param g2 The geometry to test
-* \param pat The DE9IM pattern to test
-* \returns 1 on true, 0 on false, 2 on exception
+* \returns The DE9IM relate pattern string
 * \see GEOSPrepare
 * \see GEOSRelate
 * \see GEOSPreparedRelatePattern
@@ -5227,7 +5226,8 @@ extern char GEOS_DLL * GEOSPreparedRelate(
 * prepared and provided geometry.
 * \param pg1 The prepared geometry
 * \param g2 The geometry to test
-* \returns The DE9IM relate pattern string
+* \param pat The DE9IM pattern to test
+* \returns 1 on true, 0 on false, 2 on exception
 * \see GEOSPrepare
 * \see GEOSRelatePattern
 * \see GEOSPreparedRelate

@@ -236,7 +236,7 @@ public:
      * @param geom the Geometry to test the
      * @return the DE9IM matrix
      */
-    virtual std::unique_ptr<IntersectionMatrix> relate(const geom::Geometry* g) const = 0;
+    virtual std::unique_ptr<IntersectionMatrix> relate(const geom::Geometry* geom) const = 0;
 
     /** \brief
      * Compares the prepared geometry to the given geometry
@@ -248,7 +248,7 @@ public:
      * @param pat the DE9IM pattern
      * @return true if the patterns are consistent
      */
-    virtual bool relate(const geom::Geometry* g, const std::string& pat) const = 0;
+    virtual bool relate(const geom::Geometry* geom, const std::string& pat) const = 0;
 
 };
 
