@@ -27,22 +27,20 @@ struct test_relateng_support {
     WKTReader r;
     WKTWriter w;
 
-    void checkPrepared(const std::string& wkta, const std::string& wktb)
+    void checkPrepared(const Geometry* a, const Geometry* b)
     {
-        std::unique_ptr<Geometry> a = r.read(wkta);
-        std::unique_ptr<Geometry> b = r.read(wktb);
-        auto prep_a = RelateNG::prepare(a.get());
-
-        ensure_equals("equalsTopo", prep_a->equalsTopo(b.get()), a->equals(b.get()));
-        ensure_equals("intersects", prep_a->intersects(b.get()), a->intersects(b.get()));
-        ensure_equals("disjoint",   prep_a->disjoint(b.get()),   a->disjoint(b.get()));
-        ensure_equals("covers",     prep_a->covers(b.get()),     a->covers(b.get()));
-        ensure_equals("coveredby",  prep_a->coveredBy(b.get()),  a->coveredBy(b.get()));
-        ensure_equals("within",     prep_a->within(b.get()),     a->within(b.get()));
-        ensure_equals("contains",   prep_a->contains(b.get()),   a->contains(b.get()));
-        ensure_equals("crosses",    prep_a->crosses(b.get()),    a->crosses(b.get()));
-        ensure_equals("touches",    prep_a->touches(b.get()),    a->touches(b.get()));
-        ensure_equals("relate",     prep_a->relate(b.get()),   a->relate(b.get())->toString());
+        auto prep_a = RelateNG::prepare(a);
+        auto prep_b = RelateNG::prepare(b);
+        ensure_equals("preparedEqualsTopo", prep_a->equalsTopo(b), a->equals(b));
+        ensure_equals("preparedIntersects", prep_a->intersects(b), a->intersects(b));
+        ensure_equals("preparedDisjoint",   prep_a->disjoint(b),   a->disjoint(b));
+        ensure_equals("preparedCovers",     prep_a->covers(b),     a->covers(b));
+        ensure_equals("preparedCoveredby",  prep_a->coveredBy(b),  a->coveredBy(b));
+        ensure_equals("preparedWithin",     prep_a->within(b),     a->within(b));
+        ensure_equals("preparedContains",   prep_a->contains(b),   a->contains(b));
+        ensure_equals("preparedCrosses",    prep_a->crosses(b),    a->crosses(b));
+        ensure_equals("preparedTouches",    prep_a->touches(b),    a->touches(b));
+        ensure_equals("preparedRelate",     prep_a->relate(b),     a->relate(b)->toString());
     }
 
     void checkIntersectsDisjoint(const std::string& wkta, const std::string& wktb, bool expectedValue)
@@ -101,6 +99,7 @@ struct test_relateng_support {
             std::cerr << std::endl << w.write(*a) << " relate " << w.write(*b) << " = " << actualVal << std::endl;
         }
         ensure_equals("checkRelate", actualVal, expectedValue);
+        checkPrepared(a.get(), b.get());
     }
 
     void checkRelateMatches(const std::string& wkta, const std::string& wktb, const std::string pattern, bool expectedValue)
@@ -119,6 +118,7 @@ struct test_relateng_support {
             std::cerr << std::endl << w.write(*a) << " " << pred << " " << w.write(*b) << " = " << actualVal << std::endl;
         }
         ensure_equals("checkPredicate", actualVal, expectedValue);
+        checkPrepared(a.get(), b.get());
     }
 
 };

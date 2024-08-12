@@ -874,7 +874,7 @@ void object::test<62> ()
 {
     std::string a = "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))";
     std::string b = "POLYGON((0.5 0.5, 1.5 0.5, 1.5 1.5, 0.5 1.5, 0.5 0.5))";
-    checkPrepared(a, b);
+    checkRelate(a, b, "212101212");
 }
 
 
