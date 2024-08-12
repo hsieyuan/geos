@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 #include <geos/export.h>
 
 // Forward declarations
