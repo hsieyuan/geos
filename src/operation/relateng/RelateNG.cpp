@@ -183,34 +183,34 @@ RelateNG::relate(const Geometry* a, const Geometry* b, const BoundaryNodeRule& b
 
 /* public */
 bool
-RelateNG::intersects(const Geometry* a)
+RelateNG::intersects(const Geometry* b)
 {
     RelatePredicate::IntersectsPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::crosses(const Geometry* a)
+RelateNG::crosses(const Geometry* b)
 {
     RelatePredicate::CrossesPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::disjoint(const Geometry* a)
+RelateNG::disjoint(const Geometry* b)
 {
     RelatePredicate::DisjointPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::touches(const Geometry* a)
+RelateNG::touches(const Geometry* b)
 {
     RelatePredicate::TouchesPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
@@ -223,57 +223,56 @@ RelateNG::within(const Geometry* a)
 
 /* public */
 bool
-RelateNG::contains(const Geometry* a)
+RelateNG::contains(const Geometry* b)
 {
     RelatePredicate::ContainsPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::overlaps(const Geometry* a)
+RelateNG::overlaps(const Geometry* b)
 {
     RelatePredicate::OverlapsPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::covers(const Geometry* a)
+RelateNG::covers(const Geometry* b)
 {
     RelatePredicate::CoversPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::coveredBy(const Geometry* a)
+RelateNG::coveredBy(const Geometry* b)
 {
     RelatePredicate::CoveredByPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::equalsTopo(const Geometry* a)
+RelateNG::equalsTopo(const Geometry* b)
 {
     RelatePredicate::EqualsTopoPredicate pred;
-    return evaluate(a, pred);
+    return evaluate(b, pred);
 }
 
 /* public */
 bool
-RelateNG::relate(const Geometry* a, const std::string& imPattern)
+RelateNG::relate(const Geometry* b, const std::string& imPattern)
 {
-    return evaluate(a, imPattern);
+    return evaluate(b, imPattern);
 }
 
 /* public */
 std::string
-RelateNG::relate(const Geometry* a)
+RelateNG::relate(const Geometry* b)
 {
-    RelateNG rng(a, false);
-    return rng.evaluate(a)->toString();
+    return evaluate(b)->toString();
 }
 
 /************************************************************************/

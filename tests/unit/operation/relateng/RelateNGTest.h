@@ -42,7 +42,7 @@ struct test_relateng_support {
         ensure_equals("contains",   prep_a->contains(b.get()),   a->contains(b.get()));
         ensure_equals("crosses",    prep_a->crosses(b.get()),    a->crosses(b.get()));
         ensure_equals("touches",    prep_a->touches(b.get()),    a->touches(b.get()));
-        ensure_equals("relate",     prep_a->relate(b.get()),     a->relate(b.get())->toString());
+        ensure_equals("relate",     prep_a->relate(b.get()),   a->relate(b.get())->toString());
     }
 
     void checkIntersectsDisjoint(const std::string& wkta, const std::string& wktb, bool expectedValue)
