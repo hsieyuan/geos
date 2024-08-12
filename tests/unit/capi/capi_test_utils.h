@@ -44,7 +44,7 @@ namespace capitest {
             if (result_)   GEOSGeom_destroy(result_);
             if (expected_) GEOSGeom_destroy(expected_);
             if (wkt_)      GEOSFree(wkt_);
-            if (str_)       GEOSFree(str_);
+            if (str_)      GEOSFree(str_);
             finishGEOS();
         }
 
