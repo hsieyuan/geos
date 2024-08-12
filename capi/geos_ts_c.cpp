@@ -3750,6 +3750,24 @@ extern "C" {
         });
     }
 
+    char *
+    GEOSPreparedRelate_r(GEOSContextHandle_t extHandle,
+                         const geos::geom::prep::PreparedGeometry* pg, const Geometry* g)
+    {
+        return execute(extHandle, [&]() -> char * {
+            return gstrdup(pg->relate(g));
+        });
+    }
+
+    char
+    GEOSPreparedRelatePattern_r(GEOSContextHandle_t extHandle,
+                         const geos::geom::prep::PreparedGeometry* pg, const Geometry* g, const char* pat)
+    {
+        return execute(extHandle, 2, [&]() {
+            return pg->relate(g, std::string(pat));
+        });
+    }
+
     CoordinateSequence*
     GEOSPreparedNearestPoints_r(GEOSContextHandle_t extHandle,
                          const geos::geom::prep::PreparedGeometry* pg, const Geometry* g)

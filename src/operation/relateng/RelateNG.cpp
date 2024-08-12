@@ -268,6 +268,14 @@ RelateNG::relate(const Geometry* a, const std::string& imPattern)
     return evaluate(a, imPattern);
 }
 
+/* public */
+std::string
+RelateNG::relate(const Geometry* a)
+{
+    RelateNG rng(a, false);
+    return rng.evaluate(a)->toString();
+}
+
 /************************************************************************/
 
 /* public static */

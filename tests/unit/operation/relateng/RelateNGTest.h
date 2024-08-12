@@ -35,14 +35,14 @@ struct test_relateng_support {
         auto prep_b = RelateNG::prepare(b.get());
         ensure_equals("equalsTopo", prep_a->equalsTopo(b.get()), a->equals(b.get()));
         ensure_equals("intersects", prep_a->intersects(b.get()), a->intersects(b.get()));
-        ensure_equals("disjoint", prep_a->disjoint(b.get()), a->disjoint(b.get()));
-        ensure_equals("covers", prep_a->covers(b.get()), a->covers(b.get()));
-        ensure_equals("coveredby", prep_a->coveredBy(b.get()), a->coveredBy(b.get()));
-        ensure_equals("within", prep_a->within(b.get()), a->within(b.get()));
-        ensure_equals("contains", prep_a->contains(b.get()), a->contains(b.get()));
-        ensure_equals("crosses", prep_a->crosses(b.get()), a->crosses(b.get()));
-        ensure_equals("touches", prep_a->touches(b.get()), a->touches(b.get()));
-        ensure_equals("relate", prep_a->relate(b.get()), a->relate(b.get())->toString());
+        ensure_equals("disjoint",   prep_a->disjoint(b.get()),   a->disjoint(b.get()));
+        ensure_equals("covers",     prep_a->covers(b.get()),     a->covers(b.get()));
+        ensure_equals("coveredby",  prep_a->coveredBy(b.get()),  a->coveredBy(b.get()));
+        ensure_equals("within",     prep_a->within(b.get()),     a->within(b.get()));
+        ensure_equals("contains",   prep_a->contains(b.get()),   a->contains(b.get()));
+        ensure_equals("crosses",    prep_a->crosses(b.get()),    a->crosses(b.get()));
+        ensure_equals("touches",    prep_a->touches(b.get()),    a->touches(b.get()));
+        ensure_equals("relate",     prep_a->relate(b.get()),     a->relate(b.get())->toString());
     }
 
     void checkIntersectsDisjoint(const std::string& wkta, const std::string& wktb, bool expectedValue)

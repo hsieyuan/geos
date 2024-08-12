@@ -149,6 +149,19 @@ BasicPreparedGeometry::within(const geom::Geometry* g) const
     return getRelateNG()->within(g);
 }
 
+bool
+BasicPreparedGeometry::relate(const geom::Geometry* g, const std::string& pat) const
+{
+    return getRelateNG()->relate(g, pat);
+}
+
+std::string
+BasicPreparedGeometry::relate(const geom::Geometry* g) const
+{
+    return getRelateNG()->relate(g);
+}
+
+
 std::unique_ptr<geom::CoordinateSequence>
 BasicPreparedGeometry::nearestPoints(const geom::Geometry* g) const
 {

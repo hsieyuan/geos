@@ -271,8 +271,8 @@ public:
     bool covers(const Geometry* a);
     bool coveredBy(const Geometry* a);
     bool equalsTopo(const Geometry* a);
-    bool relate(const Geometry* a, const std::string& imPattern);
-
+    bool relate(const Geometry* a, const std::string& pat);
+    std::string relate(const Geometry* a);
 
 };
 

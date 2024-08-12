@@ -182,6 +182,16 @@ public:
     /**
      * Default implementation.
      */
+    std::string relate(const geom::Geometry* g) const override;
+
+    /**
+     * Default implementation.
+     */
+    bool relate(const geom::Geometry* g, const std::string& pat) const override;
+
+    /**
+     * Default implementation.
+     */
     std::unique_ptr<geom::CoordinateSequence> nearestPoints(const geom::Geometry* g) const override;
 
     /**
