@@ -467,6 +467,8 @@ void object::test<17>()
 
     prepGeom1_ = GEOSPrepare(geom1_);
 
+    // Run each test twice to make sure the "accelerated" second call
+    // is the same as the first one.
     ensure_equals("prepTouches1", GEOSPreparedTouches(prepGeom1_, geom2_), GEOSTouches(geom1_, geom2_));
     ensure_equals("prepTouches2", GEOSPreparedTouches(prepGeom1_, geom2_), GEOSTouches(geom1_, geom2_));
     ensure_equals("prepOverlaps1", GEOSPreparedOverlaps(prepGeom1_, geom2_), GEOSOverlaps(geom1_, geom2_));
