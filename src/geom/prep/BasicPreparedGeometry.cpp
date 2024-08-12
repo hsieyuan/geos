@@ -91,6 +91,12 @@ BasicPreparedGeometry::isAnyTargetComponentInTest(const geom::Geometry* testGeom
 }
 
 bool
+BasicPreparedGeometry::within(const geom::Geometry* g) const
+{
+    return getRelateNG()->within(g);
+}
+
+bool
 BasicPreparedGeometry::contains(const geom::Geometry* g) const
 {
     return getRelateNG()->contains(g);
@@ -142,12 +148,6 @@ bool
 BasicPreparedGeometry::touches(const geom::Geometry* g) const
 {
     return getRelateNG()->touches(g);
-}
-
-bool
-BasicPreparedGeometry::within(const geom::Geometry* g) const
-{
-    return getRelateNG()->within(g);
 }
 
 bool

@@ -466,8 +466,6 @@ void object::test<32> ()
     std::string a = "POLYGON ((1 5, 5 5, 5 1, 1 1, 1 5))";
     std::string b = "LINESTRING (2 3, 3 5, 4 3)";
     checkIntersectsDisjoint(a, b, true);
-  //checkContainsWithin(a, b, true);
-  //checkCoversCoveredBy(a, b, true);
     checkTouches(a, b, false);
     checkOverlaps(a, b, false);
 }

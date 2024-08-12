@@ -77,7 +77,8 @@ private:
     /*
      * Memory contexts for lower level allocations
      */
-    std::vector<std::unique_ptr<const RelateSegmentString>> segStringStore;
+    std::vector<std::unique_ptr<const RelateSegmentString>> segStringTempStore;
+    std::vector<std::unique_ptr<const RelateSegmentString>> segStringPermStore;
     std::vector<std::unique_ptr<CoordinateSequence>> csStore;
 
 
@@ -103,16 +104,19 @@ private:
     void extractSegmentStringsFromAtomic(bool isA,
         const Geometry* geom, const MultiPolygon* parentPolygonal,
         const Envelope* env,
-        std::vector<const SegmentString*>& segStrings);
+        std::vector<const SegmentString*>& segStrings,
+        std::vector<std::unique_ptr<const RelateSegmentString>>& segStore);
 
     void extractRingToSegmentString(bool isA,
         const LinearRing* ring, int ringId, const Envelope* env,
         const Geometry* parentPoly,
-        std::vector<const SegmentString*>& segStrings);
+        std::vector<const SegmentString*>& segStrings,
+        std::vector<std::unique_ptr<const RelateSegmentString>>& segStore);
 
     void extractSegmentStrings(bool isA,
         const Envelope* env, const Geometry* geom,
-        std::vector<const SegmentString*>& segStrings);
+        std::vector<const SegmentString*>& segStrings,
+        std::vector<std::unique_ptr<const RelateSegmentString>>& segStore);
 
     const CoordinateSequence* orientAndRemoveRepeated(
         const CoordinateSequence* cs, bool orientCW);

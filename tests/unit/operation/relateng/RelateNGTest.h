@@ -27,6 +27,13 @@ struct test_relateng_support {
     WKTReader r;
     WKTWriter w;
 
+    void checkPrepared(const std::string& wkta, const std::string& wktb)
+    {
+        std::unique_ptr<Geometry> a = r.read(wkta);
+        std::unique_ptr<Geometry> b = r.read(wktb);
+        return checkPrepared(a.get(), b.get());
+    }
+
     void checkPrepared(const Geometry* a, const Geometry* b)
     {
         auto prep_a = RelateNG::prepare(a);
@@ -40,7 +47,7 @@ struct test_relateng_support {
         ensure_equals("preparedContains",   prep_a->contains(b),   a->contains(b));
         ensure_equals("preparedCrosses",    prep_a->crosses(b),    a->crosses(b));
         ensure_equals("preparedTouches",    prep_a->touches(b),    a->touches(b));
-        ensure_equals("preparedRelate",     prep_a->relate(b)->toString(), a->relate(b)->toString());
+        ensure_equals("preparedRelate", prep_a->relate(b)->toString(), a->relate(b)->toString());
     }
 
     void checkIntersectsDisjoint(const std::string& wkta, const std::string& wktb, bool expectedValue)

@@ -364,8 +364,21 @@ std::vector<const SegmentString*>
 RelateGeometry::extractSegmentStrings(bool isA, const Envelope* env)
 {
     std::vector<const SegmentString*> segStrings;
-    segStringStore.clear();
-    extractSegmentStrings(isA, env, geom, segStrings);
+
+    if (isA && isPrepared() && env == nullptr) {
+        if (segStringPermStore.empty()) {
+            extractSegmentStrings(isA, env, geom, segStrings, segStringPermStore);
+        }
+        else {
+            for (auto& ss : segStringPermStore) {
+                segStrings.push_back(ss.get());
+            }
+        }
+    }
+    else {
+        segStringTempStore.clear();
+        extractSegmentStrings(isA, env, geom, segStrings, segStringTempStore);
+    }
     return segStrings;
 }
 
@@ -374,7 +387,8 @@ RelateGeometry::extractSegmentStrings(bool isA, const Envelope* env)
 void
 RelateGeometry::extractSegmentStrings(bool isA,
     const Envelope* env, const Geometry* p_geom,
-    std::vector<const SegmentString*>& segStrings)
+    std::vector<const SegmentString*>& segStrings,
+    std::vector<std::unique_ptr<const RelateSegmentString>>& segStore)
 {
     //-- record if parent is MultiPolygon
     const MultiPolygon* parentPolygonal = nullptr;
@@ -386,10 +400,10 @@ RelateGeometry::extractSegmentStrings(bool isA,
         const Geometry* g = p_geom->getGeometryN(i);
         // if (g->getGeometryTypeId() == GEOS_GEOMETRYCOLLECTION) {
         if (g->isCollection()) {
-            extractSegmentStrings(isA, env, g, segStrings);
+            extractSegmentStrings(isA, env, g, segStrings, segStore);
         }
         else {
-            extractSegmentStringsFromAtomic(isA, g, parentPolygonal, env, segStrings);
+            extractSegmentStringsFromAtomic(isA, g, parentPolygonal, env, segStrings, segStore);
         }
     }
 }
@@ -400,7 +414,8 @@ void
 RelateGeometry::extractSegmentStringsFromAtomic(bool isA,
     const Geometry* p_geom, const MultiPolygon* parentPolygonal,
     const Envelope* env,
-    std::vector<const SegmentString*>& segStrings)
+    std::vector<const SegmentString*>& segStrings,
+    std::vector<std::unique_ptr<const RelateSegmentString>>& segStore)
 {
     if (p_geom->isEmpty())
         return;
@@ -419,7 +434,7 @@ RelateGeometry::extractSegmentStringsFromAtomic(bool isA,
          */
         const CoordinateSequence* cs = removeRepeated(line->getCoordinatesRO());
         auto ss = RelateSegmentString::createLine(cs, isA, elementId, this);
-        segStringStore.emplace_back(ss);
+        segStore.emplace_back(ss);
         segStrings.push_back(ss);
     }
     else if (p_geom->getGeometryTypeId() == GEOS_POLYGON) {
@@ -429,9 +444,9 @@ RelateGeometry::extractSegmentStringsFromAtomic(bool isA,
             parentPoly = static_cast<const Geometry*>(parentPolygonal);
         else
             parentPoly = static_cast<const Geometry*>(poly);
-        extractRingToSegmentString(isA, poly->getExteriorRing(), 0, env, parentPoly, segStrings);
+        extractRingToSegmentString(isA, poly->getExteriorRing(), 0, env, parentPoly, segStrings, segStore);
         for (uint32_t i = 0; i < poly->getNumInteriorRing(); i++) {
-            extractRingToSegmentString(isA, poly->getInteriorRingN(i), static_cast<int>(i+1), env, parentPoly, segStrings);
+            extractRingToSegmentString(isA, poly->getInteriorRingN(i), static_cast<int>(i+1), env, parentPoly, segStrings, segStore);
         }
     }
 }
@@ -442,7 +457,8 @@ void
 RelateGeometry::extractRingToSegmentString(bool isA,
     const LinearRing* ring, int ringId, const Envelope* env,
     const Geometry* parentPoly,
-    std::vector<const SegmentString*>& segStrings)
+    std::vector<const SegmentString*>& segStrings,
+    std::vector<std::unique_ptr<const RelateSegmentString>>& segStore)
 {
     if (ring->isEmpty())
         return;
@@ -457,7 +473,7 @@ RelateGeometry::extractRingToSegmentString(bool isA,
     bool requireCW = (ringId == 0);
     const CoordinateSequence* cs = orientAndRemoveRepeated(ring->getCoordinatesRO(), requireCW);
     auto ss = RelateSegmentString::createRing(cs, isA, elementId, ringId, parentPoly, this);
-    segStringStore.emplace_back(ss);
+    segStore.emplace_back(ss);
     segStrings.push_back(ss);
 }
 

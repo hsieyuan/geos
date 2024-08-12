@@ -131,6 +131,11 @@ public:
     /**
      * Default implementation.
      */
+    bool within(const geom::Geometry* g) const override;
+
+    /**
+     * Default implementation.
+     */
     bool contains(const geom::Geometry* g) const override;
 
     /**
@@ -173,11 +178,6 @@ public:
      * Default implementation.
      */
     bool touches(const geom::Geometry* g) const override;
-
-    /**
-     * Default implementation.
-     */
-    bool within(const geom::Geometry* g) const override;
 
     /**
      * Default implementation.

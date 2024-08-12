@@ -674,10 +674,10 @@ RelateNG::computeEdgesMutual(std::vector<const SegmentString*>& edgesB, const En
         std::vector<const SegmentString*> edgesA = geomA.extractSegmentStrings(GEOM_A, envExtract);
         edgeMutualInt.reset(new MCIndexSegmentSetMutualIntersector(envExtract));
         edgeMutualInt->setBaseSegments(&edgesA);
-        edgeMutualInt->setSegmentIntersector(&intersector);
 
     }
 
+    edgeMutualInt->setSegmentIntersector(&intersector);
     edgeMutualInt->process(&edgesB);
 }
 
