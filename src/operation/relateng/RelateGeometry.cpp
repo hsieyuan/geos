@@ -365,6 +365,9 @@ RelateGeometry::extractSegmentStrings(bool isA, const Envelope* env)
 {
     std::vector<const SegmentString*> segStrings;
 
+    // When we get called in the context of a prepared geometry
+    // geomA might already have segments extracted and stored,
+    // so check and reuse them if possible
     if (isA && isPrepared() && env == nullptr) {
         if (segStringPermStore.empty()) {
             extractSegmentStrings(isA, env, geom, segStrings, segStringPermStore);
@@ -375,6 +378,9 @@ RelateGeometry::extractSegmentStrings(bool isA, const Envelope* env)
             }
         }
     }
+    // In the context of geomB we always extract for each call,
+    // and same goes for geomA when not in prepared mode, or when
+    // using an envelope filter.
     else {
         segStringTempStore.clear();
         extractSegmentStrings(isA, env, geom, segStrings, segStringTempStore);
