@@ -19,6 +19,7 @@
 
 #include <geos/geom/prep/BasicPreparedGeometry.h>
 #include <geos/geom/Coordinate.h>
+#include <geos/geom/IntersectionMatrix.h>
 #include <geos/algorithm/PointLocator.h>
 #include <geos/geom/util/ComponentCoordinateExtracter.h>
 #include <geos/operation/distance/DistanceOp.h>
@@ -155,7 +156,7 @@ BasicPreparedGeometry::relate(const geom::Geometry* g, const std::string& pat) c
     return getRelateNG()->relate(g, pat);
 }
 
-std::string
+std::unique_ptr<IntersectionMatrix>
 BasicPreparedGeometry::relate(const geom::Geometry* g) const
 {
     return getRelateNG()->relate(g);

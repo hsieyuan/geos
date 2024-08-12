@@ -28,6 +28,7 @@ namespace geos {
         class Geometry;
         class Coordinate;
         class CoordinateSequence;
+        class IntersectionMatrix;
     }
 }
 
@@ -235,7 +236,7 @@ public:
      * @param geom the Geometry to test the
      * @return the DE9IM matrix
      */
-    virtual std::string relate(const geom::Geometry* g) const = 0;
+    virtual std::unique_ptr<IntersectionMatrix> relate(const geom::Geometry* g) const = 0;
 
     /** \brief
      * Compares the prepared geometry to the given geometry

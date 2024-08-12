@@ -3755,7 +3755,7 @@ extern "C" {
                          const geos::geom::prep::PreparedGeometry* pg, const Geometry* g)
     {
         return execute(extHandle, [&]() -> char * {
-            return gstrdup(pg->relate(g));
+            return gstrdup(pg->relate(g)->toString());
         });
     }
 

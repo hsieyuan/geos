@@ -182,7 +182,7 @@ public:
     /**
      * Default implementation.
      */
-    std::string relate(const geom::Geometry* g) const override;
+    std::unique_ptr<IntersectionMatrix> relate(const geom::Geometry* g) const override;
 
     /**
      * Default implementation.

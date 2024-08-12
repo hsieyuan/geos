@@ -269,10 +269,10 @@ RelateNG::relate(const Geometry* b, const std::string& imPattern)
 }
 
 /* public */
-std::string
+std::unique_ptr<IntersectionMatrix>
 RelateNG::relate(const Geometry* b)
 {
-    return evaluate(b)->toString();
+    return evaluate(b);
 }
 
 /************************************************************************/

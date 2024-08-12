@@ -272,7 +272,7 @@ public:
     bool coveredBy(const Geometry* a);
     bool equalsTopo(const Geometry* a);
     bool relate(const Geometry* a, const std::string& pat);
-    std::string relate(const Geometry* a);
+    std::unique_ptr<IntersectionMatrix> relate(const Geometry* a);
 
 };
 
